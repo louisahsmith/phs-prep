@@ -9,7 +9,6 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library(learnr)
 tutorial_options(exercise.timelimit = 60)
-knitr::opts_chunk$set(fig.align = "center")
 options(digits = 5, scipen = 999)
 
 pmf_func <- function(x, fx){
@@ -30,7 +29,6 @@ cdf_func <- function(x, fx){
 }
 
 ```
-<script src = "js/iframeResizer.contentWindow.min.js"></script>
 
 ## Why and how
 
@@ -104,19 +102,19 @@ grape
 ```
 
 Sometimes you'll accidentally do things that are not allowed in R. In this case, you'll get an error message. Some messages are more helpful than others; if you can't figure out what an error message is trying to tell you, it's often helpful to just copy and paste into Google, because chances are someone has had a similar error. Run these lines of code to see the error messages you get (and start to get used to connecting the unhelpful language with the type of problem that produced such an error).
-```{r error1, exercise = TRUE, exercise.lines = 2}
+```{r error1, exercise = TRUE, exercise.lines = 2, error = TRUE}
 2 <- x 
 # can't assign something to a number
 ```
-```{r error2, exercise = TRUE, exercise.lines = 2}
+```{r error2, exercise = TRUE, exercise.lines = 2, error = TRUE}
 4 % 2 
 # not a function
 ```
-```{r error3, exercise = TRUE, exercise.lines = 2}
+```{r error3, exercise = TRUE, exercise.lines = 2, error = TRUE}
 blah 
 # we haven't made an object called blah
 ```
-```{r error4, exercise = TRUE, exercise.lines = 2}
+```{r error4, exercise = TRUE, exercise.lines = 2, error = TRUE}
 sqrt("4") 
 # putting the 4 in quotes makes it a character string, not a number
 ```
@@ -174,7 +172,7 @@ exp(Inf)
 
 **Rearrange these lines of code so that they all run with no errors and the last line prints the value 10.**
 
-```{r prac1a, exercise = TRUE}
+```{r prac1a, exercise = TRUE, error = TRUE}
 broccoli <- lettuce * 2 / (tomato ^ 2)
 broccoli
 carrot
@@ -343,7 +341,7 @@ These pop up whenever we want to evaluate a logical statement. Run the code belo
 2 + 2 == 4
 ```
 Note the double equals sign in the last statement -- you have to use two when checking whether two objects or values are equal (otherwise R will try to *assign* them to be equal; try running the code below).
-```{r logicals2, exercise = TRUE, exercise.lines = 1}
+```{r logicals2, exercise = TRUE, exercise.lines = 1, error = TRUE}
 2 + 2 = 4
 ```
 Play around with these logical vectors:
@@ -411,11 +409,11 @@ question("Which of these commands will create the vector `1, 1, 2, 2`?",
 
 ```
 
-```{r prac2c-hint-1}
+```{r prac2c-hint-1, error = TRUE}
 rep(rep(seq(...)))
 ```
 
-```{r prac2c-hint-2}
+```{r prac2c-hint-2, error = TRUE}
 rep(rep(seq(4, 5, by = 1), times = 2), each = 3)
 ```
 
@@ -947,7 +945,7 @@ cbind(x, Fx)
 ```
 
 We also saw the Poisson pmf in the last section. Finish the second line of code to compute the correct values for the Poisson cdf with $\lambda = 2$. Print out the values as in the box above, and then eyeball the graph of the cdf below to make sure they match.
-```{r cdfPois, exercise = TRUE, fig.height=2.75, fig.width = 4.5, fig.align="center", exercise.lines = 3}
+```{r cdfPois, exercise = TRUE, fig.height=2.75, fig.width = 4.5, fig.align="center", exercise.lines = 3, error = TRUE}
 x <- 0:10
 Fx <- 
 ```
@@ -1071,7 +1069,7 @@ n <- 100
 
 ```
 
-```{r disease-hint-1}
+```{r disease-hint-1, error = TRUE}
 n <- 100
 disease <- # try using the rep() function twice within the c() function
 ```
@@ -1728,7 +1726,7 @@ Now see if you can estimate $F(1)$ using these data.
 
 ```
 
-```{r propLT1-hint-1}
+```{r propLT1-hint-1, error = TRUE}
 mean(...) # what logical statement should you use?
 ```
 
@@ -2002,11 +2000,11 @@ Returning to the `iris_sub` dataset, create another variable `new_species` in th
 
 ```
 
-```{r newSpec-hint-1}
+```{r newSpec-hint-1, error = TRUE}
 iris_sub$new_species <- # code here
 ```
 
-```{r newSpec-hint-2}
+```{r newSpec-hint-2, error = TRUE}
 iris_sub$new_species <- factor(iris_sub$Species, ...)
 ```
 
@@ -2048,7 +2046,7 @@ Now let's try to put all of these ideas together. Another dataset in R is called
 
 ```
 
-```{r aggFin-hint-1}
+```{r aggFin-hint-1, error = TRUE}
 mtcars$transmission <- factor(...)
 ```
 
@@ -2056,7 +2054,7 @@ mtcars$transmission <- factor(...)
 mtcars$transmission <- factor(mtcars$am, levels = c("1", "0"), labels = c("manual", "automatic"))
 ```
 
-```{r aggFin-hint-3}
+```{r aggFin-hint-3, error = TRUE}
 aggregate(mtcars$mpg, by = list(..., ...), FUN = mean)
 ```
 
@@ -2361,7 +2359,7 @@ mat[2,3] # 2,3 element
 ```
 
 What happens if you use an index that is larger than the matrix itself?
-```{r matErr, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep"}
+```{r matErr, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep", error = TRUE}
 mat[4,4]
 ```
 
@@ -2407,7 +2405,7 @@ question("Which matrix-vector multiplication commands will run?",
 ```
 
 When we try to multiply objects with dimensions that aren't compatible, R gives us a warning.
-```{r matMultErr, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep"}
+```{r matMultErr, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep", error = TRUE}
 vec1 %*% mat
 ```
 
@@ -2472,7 +2470,7 @@ mat %*% id2
 
 Finally, let's add in one more helpful function when working with matrices in R. The `solve()` function will find the inverse of a matrix, if it exists. First let's look at the error message we get when the inverse *doesn't* exist. We'll make a $3 \times 3$ matrix with columns made from the two vectors we already made, along with a third column that is just 2 times the first. This makes it so the columns of the matrix are **linearly dependent**, and it can't be inverted.
 
-```{r singular, exercise = TRUE, exercise.lines = 3, exercise.setup = "mat-prep"}
+```{r singular, exercise = TRUE, exercise.lines = 3, exercise.setup = "mat-prep", error = TRUE}
 mat3 <- cbind(vec1, vec2, 2*vec1)
 mat3
 solve(mat3)
@@ -2622,7 +2620,7 @@ The two estimators of $\mu$ we'll compare are the sample mean and the sample med
 
 We can reuse most of the code from last time. Fill in the missing lines to reflect the two estimators we are now comparing, where $\hat{\mu}_A$ is the sample mean and $\hat{\mu}_B$ the sample median.
 
-```{r medSim, exercise = TRUE, exercise.lines = 8}
+```{r medSim, exercise = TRUE, exercise.lines = 8, error = TRUE}
 set.seed(123) # set seed for reproducible results
 res <- matrix(NA, nrow = 1000, ncol = 2) # empty matrix for results
 for (j in 1:1000){
@@ -2718,7 +2716,7 @@ Since we've already compared estimators, let's just stick with one: the sample m
 
 Before we move on, let's practice designing simulations to demonstrate both of these concepts. First, let's compare the two sample sizes, 100 and 1000. A number of the lines in the following code are incomplete, but the structure is almost identical to the previous for loops we ran. Now instead of comparing two estimators, we are using the same estimator in two samples. Fill in the missing pieces.
 
-```{r nComp, exercise = TRUE, exercise.lines = 13}
+```{r nComp, exercise = TRUE, exercise.lines = 13, error = TRUE}
 # set seed for reproducible results
 n1 <-  # first sample size
 n2 <-  # second sample size to compare
