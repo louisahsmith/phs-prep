@@ -8,6 +8,8 @@ runtime: shiny_prerendered
 ---
 ```{r setup, include=FALSE}
 library(learnr)
+knitr::opts_chunk$set(fig.align = "center",
+                      cache = TRUE)
 tutorial_options(exercise.timelimit = 60)
 options(digits = 5, scipen = 999)
 
@@ -28,6 +30,15 @@ cdf_func <- function(x, fx){
   title(ylab="F(x)", line = 2, xlab = "x")
 }
 
+```
+```{r, context="render", echo=FALSE}
+textOutput("keep_alive")
+```
+```{r, context="server"}
+output$keep_alive <- renderText({
+  req(input$alive_count)
+  input$alive_count
+})
 ```
 
 ## Why and how
