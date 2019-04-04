@@ -4,12 +4,13 @@ output:
   learnr::tutorial:
     version: 1.1
     theme: paper
+    css: css/alive.css
+    js: js/live.js
 runtime: shiny_prerendered
 ---
 ```{r setup, include=FALSE}
 library(learnr)
-knitr::opts_chunk$set(fig.align = "center",
-                      cache = TRUE)
+knitr::opts_chunk$set(fig.align = "center")
 tutorial_options(exercise.timelimit = 60)
 options(digits = 5, scipen = 999)
 
