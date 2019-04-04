@@ -212,4 +212,5 @@ log(43 * 11 + factorial(3)) - sqrt(exp(pi/7)) * cos(0)
 ```
 
 #### More resources
+
 Start [here](https://www.khanacademy.org/math/pre-algebra/pre-algebra-exponents-radicals/pre-algebra-exponent-properties/v/exponent-properties-involving-products) if you need more practice with exponents; [here](https://www.khanacademy.org/math/algebra2/exponential-and-logarithmic-functions) for more practice with logarithms.
