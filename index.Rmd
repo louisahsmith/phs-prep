@@ -33,10 +33,10 @@ cdf_func <- function(x, fx){
 }
 
 ```
-```{r, context="render", echo=FALSE}
+```{r ralive, context="render", echo=FALSE}
 textOutput("keep_alive")
 ```
-```{r, context="server", echo=FALSE}
+```{r salive, context="server", echo=FALSE}
 output$keep_alive <- renderText({
   req(input$alive_count)
   input$alive_count
@@ -930,7 +930,7 @@ This tells us the relationship between the pmf and the cdf. For a discrete rando
 
 If we look at a graph of the cdf for our coin game, we can see what's going on. At each jump (from an open circle to a closed circle), we are simply adding $P(X = x)$, or $f(x)$, for that $x$-value. 
 
-```{r, fig.height=3, fig.width = 4.5, fig.align="center", echo = F}
+```{r index-1, fig.height=3, fig.width = 4.5, fig.align="center", echo = F}
 x <- 0:10
 probs <- dbinom(x, 10, .5)
 cdf_func(x, probs)
@@ -968,7 +968,7 @@ Fx <- ppois(x, lambda = 2)
 cbind(x, Fx)
 ```
 
-```{r, fig.height=3, fig.width = 4.5, fig.align="center", echo = F}
+```{r index-2, fig.height=3, fig.width = 4.5, fig.align="center", echo = F}
 x <- 0:10
 probs <- dpois(x, lambda = 2)
 cdf_func(x, probs)
@@ -1511,7 +1511,7 @@ Another way we might want to describe a function is by the area under its curve.
 
 For example, in the graph of $f(x) = 2x^3 + 3x^2 + 4$ below, the area in blue is represented by the integral
 $$\int_{-2}^{2} 2x^3 + 3x^2 + 4 \; dx$$
-```{r, echo = F}
+```{r index-3, echo = F}
 func <- function(x) 2*x^3 + 3*x^2 + 4
 curve(func, xlim = c(-2, 3), ylab = "f(x)")
 coord_x <- c(-2, seq(-2, 2, length.out = 1000), 2)
@@ -1521,7 +1521,7 @@ polygon(coord_x, coord_y, col = "skyblue")
 
 The values at the top and bottom of the integral sign are those between which we're computing the integral. We could integrate over the whole function, from $- \infty$ to $\infty$, or choose other limits of integration:
 
-```{r, echo = F}
+```{r index-4, echo = F}
 func <- function(x) 2*x^3 + 3*x^2 + 4
 curve(func, xlim = c(-2, 3), ylab = "f(x)")
 coord_x <- c(1, seq(1, 3, length.out = 1000), 3)
@@ -2661,7 +2661,7 @@ First check to confirm that both are unbiased estimators of $\mu$, which in this
 What do you think?
 
 Before we compare the efficiency of these estimators, let's look at their **sampling distributions** as a whole. Here are histograms made from each of the estimates. (The code is essentially `hist[,1]` and `hist[,2]`, but a bit more complicated than that so it's not shown. Feel free to check out the help file for `hist()` and play around.)
-```{r, execise.setup = "med-prep", echo = F}
+```{r index-5, execise.setup = "med-prep", echo = F}
 par(mfrow = c(1, 2))
 hist(res[,1], xlab = expression(hat(mu)[A]), main = expression("Distribution of "*hat(mu)[A]), breaks = seq(-1, 1, length.out = 20))
 hist(res[,2], xlab = expression(hat(mu)[B]), main = expression("Distribution of "*hat(mu)[B]), breaks = seq(-1, 1, length.out = 20))
@@ -2669,7 +2669,7 @@ par(mfrow = c(1, 1))
 ```
 
 This is the empirical equivalent to the probability density function. Recall that $\hat{\mu}_A$ and $\hat{\mu}_B$ are just continuous random variables. We haven't said anything about *which* distribution each has, but we can describe its characteristics and calculate values like its mean and variance. If it helps to convince you that these sampling distributions are just like the probability distributions we've seen, we can turn those histograms into "density plots", which basically just smooth over the histogram bars.
-```{r, execise.setup = "med-prep", echo = F}
+```{r index-6, execise.setup = "med-prep", echo = F}
 par(mfrow = c(1, 2))
 plot(density(res[,1]), xlab = expression(hat(mu)[A]), main = expression("Distribution of "*hat(mu)[A]), xlim = c(-1, 1), ylim = c(0, 1.85))
 plot(density(res[,2]), xlab = expression(hat(mu)[B]), main = expression("Distribution of "*hat(mu)[B]), xlim = c(-1, 1), ylim = c(0, 1.85))
