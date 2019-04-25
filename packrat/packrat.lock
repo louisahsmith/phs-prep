@@ -44,14 +44,23 @@ Version: 0.13
 Hash: 1853557a0ea0db2daebf597c7ce58d70
 
 Package: glue
-Source: CRAN
+Source: github
 Version: 1.3.1
-Hash: 660bbbe3803c7cf7c9489a7d99a9c0ed
+Hash: aa74197d30215a9e0dfee6bb124da982
+GithubRepo: glue
+GithubUsername: tidyverse
+GithubRef: master
+GithubSha1: f356a1269590b610e3e4925a310d1e07eef1e767
+RemoteHost: https://api.github.com
+RemoteRepo: glue
+RemoteUsername: tidyverse
+RemoteRef: master
+RemoteSha: f356a1269590b610e3e4925a310d1e07eef1e767
 
 Package: highr
 Source: CRAN
-Version: 0.7
-Hash: 20757f5c393ed0ecf96c9e8e6d8d514c
+Version: 0.8
+Hash: 16aa2cc98d7b68c9d148c263c8dcdbcd
 
 Package: htmltools
 Source: CRAN
@@ -67,8 +76,8 @@ Requires: htmltools, jsonlite, yaml
 
 Package: httpuv
 Source: CRAN
-Version: 1.5.0
-Hash: b19e6d1c9b8c4edbf5048e72bd70dcb4
+Version: 1.5.1
+Hash: 5df00050ea4610c9092f0feddca187fa
 Requires: BH, R6, Rcpp, later, promises
 
 Package: jsonlite
@@ -129,8 +138,8 @@ Hash: 7340cfebc77ad7b107a549a8635e64dd
 
 Package: rlang
 Source: CRAN
-Version: 0.3.1
-Hash: 1176a91e0c23d4fc8f48bc5704a6f826
+Version: 0.3.4
+Hash: 6a5220d1a973463418286038095d8c0b
 
 Package: rmarkdown
 Source: CRAN
@@ -170,8 +179,8 @@ Requires: glue, magrittr, stringi
 
 Package: tinytex
 Source: CRAN
-Version: 0.11
-Hash: bcda6d10711135ce9ec0243bd2fb9d6c
+Version: 0.12
+Hash: 138dfd8584f3941b21f74044e2aeb8e7
 Requires: xfun
 
 Package: withr
@@ -181,8 +190,8 @@ Hash: d534108bcd5f34ec73e9eb523751ba20
 
 Package: xfun
 Source: CRAN
-Version: 0.5
-Hash: 384622a18a85624029dec83d26e588a6
+Version: 0.6
+Hash: 73da552325e6d8a92cf3f85a1463f6ff
 
 Package: xtable
 Source: CRAN

@@ -36,7 +36,7 @@ cdf_func <- function(x, fx){
 ```{r, context="render", echo=FALSE}
 textOutput("keep_alive")
 ```
-```{r, context="server"}
+```{r, context="server", echo=FALSE}
 output$keep_alive <- renderText({
   req(input$alive_count)
   input$alive_count

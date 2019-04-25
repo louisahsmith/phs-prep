@@ -9,10 +9,9 @@ if (length(args) == 0) {
 
 print(paste("Listening on port", port))
 
-dir <- getwd()
-rmarkdown::run(dir = dir,
-               shiny_args = list(appDir = getwd(),
-                                 host = "127.0.0.1",
+
+rmarkdown::run(dir = getwd(),
+               shiny_args = list(host = "127.0.0.1",
                                  port = as.numeric(port)))
 
 # shiny::runApp(
