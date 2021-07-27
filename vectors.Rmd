@@ -1,0 +1,195 @@
+## Vectors in R
+
+So far we have seen that we can assign a single numeric value to an object. There are many types of objects in R, one of which is a vector.
+
+A vector is a set of values that are all of the same type. Two important characteristics of a vector are its *length* and its *class*, or type. So far we have been looking at *numeric* vectors with length = 1.
+
+#### Numeric vectors
+
+Here are several numeric vectors of length 6. Run the code and then try playing around with it (substitute different numbers) to see if you can figure out what's going on with each line before reading ahead.
+```{r vectors1, exercise = TRUE, exercise.lines = 1}
+c(3, 52, 12, 875, 354, 3)
+```
+```{r vectors2, exercise = TRUE, exercise.lines = 1}
+1:6
+```
+```{r vectors3, exercise = TRUE, exercise.lines = 1}
+seq(10, 18, by = 2)
+```
+```{r vectors4, exercise = TRUE, exercise.lines = 1}
+seq(10, 20, length.out = 6)
+```
+```{r vectors5, exercise = TRUE, exercise.lines = 1}
+rep(32, times = 6)
+```
+```{r vectors6, exercise = TRUE, exercise.lines = 1}
+rep(1:2, each = 3)
+```
+
+Let's examine what just happened. One way we can create a vector is to "concatenate" values of the same class together using the function `c()`. This will be one of your most-used functions. Try creating the vector `932, 283, 194`:
+```{r vectors7, exercise = TRUE, exercise.lines = 1}
+```
+
+```{r vectors7-solution}
+c(932, 283, 194)
+```
+
+Just like we did with a vector of length 1, if we want to "save" values instead of just printing them out, we can assign vectors of all sizes to an object. We can also check what type of vector we created using the `class()` function:
+
+```{r vectors7b, exercise = TRUE, exercise.lines = 2}
+obj <- c(4, 29, 40, 9384, 584)
+class(obj)
+```
+
+We can get numbers in a sequence by putting a `:` between the first and last number that we want. So to get the vector `100, 101, 102` we would write `100:102`. 
+
+See if you can figure out how to create the vector `49, 48, 47`:
+```{r vectors8, exercise = TRUE, exercise.lines = 1}
+```
+
+```{r vectors8-solution}
+49:47
+```
+
+If we want to count by something other than ones, we can use the `seq()` function. Much like the `:` function, it creates a sequence of numbers. Its first argument is the value to start with, the second the value to end with, and then you can choose an option for how to get from one to the other. The `by` argument specifies how many to count by: `seq(0, 100, by = 10)` will count from 0 to 100 by 10s. The `length.out` argument specifies how long we want the resulting vector to be. So if we want to split 32 to 212 into 101 equal values, we would write `seq(32, 212, length.out = 101)`. 
+
+Try running each of those functions below:
+```{r vectors8b, exercise = TRUE, exercise.lines = 2}
+```
+
+Next, using the `seq()` function, create the vector `2, 4, 6, 8` and assign it to `x`, then create the vector `2, 5, 8` and assign it to `y`. Use the `by` argument first and the `length.out` argument next. Before assigning the vectors you may want to just print them out to make sure your code is doing what you expect. 
+```{r vectors9, exercise = TRUE, exercise.lines = 2}
+```
+
+```{r vectors9-solution}
+x <- seq(2, 8, by = 2)
+y <- seq(2, 8, length.out = 3)
+```
+
+The `rep()` function just repeats whatever its first argument is. The second argument specifies how many times to repeat it. So if we had an object called `x`, and we wanted to repeat it 3 times, we would write `rep(x, times = 3)`. Note that `x` itself could be any length. So if we wanted `11, 8, 11, 8` we could write `rep(c(11, 8), times = 2)`. On the other hand, suppose we wanted `11, 11, 8, 8`. In that case, we use the argument `each` to specify how many times we want each element of the vector repeated: `rep(c(11, 8), each = 2)`.
+
+Create the vector `"hello", "hello", "hello"` using the `rep()` function:
+```{r vectors10, exercise = TRUE, exercise.lines = 1}
+```
+
+```{r vectors10-solution}
+rep("hello", times = 3)
+```
+
+#### Character vectors
+
+As you saw just above, we can also have vectors that are not numeric. The vector you created above is an example of the *character* class. Here's another:
+
+```{r characters, exercise = TRUE, exercise.lines = 1}
+c("dog", "cat", "fish")
+```
+
+You can do a lot with character strings in R, but for our purposes right now they are not super useful because we can't do math with them. Try adding "dog" + "cat". 
+
+```{r charactersa, exercise = TRUE, exercise.lines = 1}
+```
+
+<div id="charactersa-hint">
+**Hint:** You should get the error "non-numeric argument to binary operator".
+</div>
+
+Be careful not to get confused with the name of an object and an object of class "character". This is something totally different. Here we're back in the land of numeric vectors:
+```{r charactersa2, exercise = TRUE, exercise.lines = 3}
+dog <- 3
+cat <- 7
+dog + cat
+```
+
+And here's an example where the name of the object and what it contains are the same word:
+```{r charactersa3, exercise = TRUE, exercise.lines = 1}
+word <- "word"
+```
+
+#### Logical vectors
+
+We can also have *logical* vectors. There are only two values to this class: `TRUE` and `FALSE`, which must be capitalized (they may also be abbreviated `T` and `F`, though this is technically not a best practice).
+```{r lgoicals0, exercise = TRUE, exercise.lines = 1}
+c(TRUE, FALSE)
+```
+
+These pop up whenever we want to evaluate a logical statement. Run the code below, then play around with switching the true statements to false and vice versa.
+```{r logicals1, exercise = TRUE}
+3 < 5
+100 + 1 > 102
+2 + 2 == 4
+```
+Note the double equals sign in the last statement -- you have to use two when checking whether two objects or values are equal (otherwise R will try to *assign* them to be equal; try running the code below).
+```{r logicals2, exercise = TRUE, exercise.lines = 1, error = TRUE}
+2 + 2 = 4
+```
+Play around with these logical vectors:
+```{r logicals3, exercise = TRUE, exercise.lines = 1}
+rep(c(TRUE, FALSE), each = 3)
+```
+```{r logicals4, exercise = TRUE, exercise.lines = 1}
+c(1 < 2, 2 < 3, 3 < 4, 4 < 5)
+```
+```{r logicals5, exercise = TRUE, exercise.lines = 1}
+rep(4 != 5, times = 5)
+```
+Instead of a double equals sign in the last one, we have `!=`. This stands for "not equals", or $\neq$. We can also evaluate $\leq$ and $\geq$ statements with `<=` and `>=`.
+
+The most important thing for you to know about logical values is that `FALSE` takes on the value of 0 and `TRUE` takes on the value of 1, so unlike characters, you *can* do math with them. Guess what each of these will print before running the code.
+```{r logicals6, exercise = TRUE, exercise.lines = 1}
+TRUE * 354
+```
+```{r logicals7, exercise = TRUE, exercise.lines = 1}
+(1 > 2) + 3
+```
+```{r logicals8, exercise = TRUE, exercise.lines = 1}
+TRUE + FALSE
+```
+
+#### *Practice*
+
+```{r prac2a, echo = F}
+question("Which of these commands will create a character vector?",
+    answer('`"dog", "dog"`'),
+    answer('`c(dog, dog)`'),
+    answer('`rep("dog", times = 2)`', correct = TRUE),
+    answer('`"dog":"dog"`'),
+    answer('`seq("dog", "dog", length.out = 2)`'),
+    answer('`c("dog", "dog")`', correct = TRUE),
+    allow_retry = T
+  )
+```
+
+```{r prac1b, echo = F}
+question("Which of these commands will create the vector `1, 1, 2, 2`?",
+    answer("`1, 1, 2, 2`"),
+    answer("`c(1, 1, 2, 2)`", correct = TRUE),
+    answer("`rep(c(1, 2), times = 2)`"),
+    answer("`rep(c(1, 2), each = 2)`", correct = TRUE),
+    answer("`c(rep(1, each = 2), rep(2, each = 2))`", correct = TRUE),
+    answer("`c(rep(1, times = 2), rep(2, times = 2))`", correct = TRUE),
+    answer("`rep(2:1, each = 2)`"),
+    answer("`rep(1:2, each = 2)`", correct = TRUE),
+    allow_retry = T
+  )
+```
+
+**Change only the (in)equality signs to make the expression equal to 3.**
+```{r prac2b, exercise = TRUE, exercise.lines = 1}
+(T < F) * (3 < 4) + (0 == 1) * exp("dog" != "cat")  + cos(3 > 3) * (6 == 2)
+```
+
+```{r prac2b-solution}
+(T > F) * (3 < 4) + (0 != 1) * exp("dog" == "cat")  + cos(3 != 3) * (6 > 2)
+```
+
+**In one line of code, using the digits 1 through 5 exactly once each, create the vector `4, 4, 4, 5, 5, 5, 4, 4, 4, 5, 5, 5`.**
+```{r prac2c, exercise = TRUE, exercise.lines = 1}
+```
+
+```{r prac2c-hint-1, error = TRUE}
+rep(rep(seq(...)))
+```
+
+```{r prac2c-hint-2, error = TRUE}
+rep(rep(seq(4, 5, by = 1), times = 2), each = 3)
+```

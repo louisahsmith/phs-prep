@@ -1,0 +1,178 @@
+## Marginal vs. conditional
+Let's move away from coins and balls and start thinking in terms of examples that are more similar to those that may appear in your work.
+
+Let $D \in \{0, 1\}$ denote the absence or presence of disease in some individual. This means that $D$ is a random variable with two possible values (0 and 1), meaning that it must have a **discrete** distribution. In particular, the only possible distribution a binary variable like $D$ can have is **Bernoulli** (just like the coin flip!). 
+
+(If you aren't really feeling this idea that disease is a *random* flip of a coin, know that we will be of course looking at factors that explain the probability of disease or other outcomes, but we assume that even once we've accounted for these factors of interest, there is some randomness left over that we can't or don't attempt to explain.)
+
+Imagine that we are looking at a population in which the disease is pretty common: any given individual has a 30% chance of having it. This means we can define the probability mass function:
+
+\[f(d) = \begin{cases} 
+      0.7 & \text{for } d =  0 \\
+      0.3 & \text{for } d =  1 \\
+   \end{cases}
+\]
+
+or, because this is a Bernoulli random variable, we saw we could write the pmf $f(d) = 0.3^d0.7^{1 - d}$. Before moving on, think about how you would write out the cumulative distribution function.
+
+#### A second random variable
+
+Now let's imagine we have a test to detect the presence of the disease (but, like most tests, it's not completely accurate). We'll say $T$ is the random variable, also Bernoulli distributed, where a value of 1 indicates that an individual tests positive and 0 indicates a negative test.
+
+Let's try to describe the probability that an individual tests positive for the disease: $P(T = 1)$. What information might you have that could affect how you describe this probability?
+
+Do you think the probability of testing positive, $P(T = 1)$ has anything to do with the probability of actually having the disease, $P(D = 1)$?
+
+We hope so, or else the test is pretty worthless! These random variables are **not independent**. We saw before that independence means that information about one event doesn't tell you anything about another event. But in this situation, testing positive tells you something about whether an individual has the disease -- that they are more likely to have it than if they tested negative. 
+
+Recall that two events $A$ and $B$ are said to be independent if 
+\[P(A \cap B) = P(A) \times P(B)\]
+
+If this were the case for our disease example, we could find the probability that someone both has disease and tests positive simply by multiplying the **marginal** probability of the disease by the **marginal** probability of testing positive: 
+$$P(D = 1, T = 1) = P(D = 1) \times P(T = 1)$$
+
+(We refer to probability of the intersection of two events $(D = 1) \cap (T = 1)$ as their **joint probability**, and we can separate the two with a comma instead of using the $\cap$ symbol.)
+
+This equality would only hold if whether you test positive has nothing to do with whether you have disease -- if it's constant no matter what.
+
+#### Marginal vs. conditional probabilities
+
+$P(T = 1)$ is a **marginal** probability: it tells us the probability of testing positive *overall* in the population, ignoring disease status. We've said $P(D = 1) = 0.3$ in this population. Will $P(T = 1)$ be the same in a population where $P(D = 1) = 0.1$? What about if $P(D = 1) = 0.7$?
+
+$P(T = 1)$ clearly depends on the distribution of disease in the population, because whether people test positive depends on whether they have the disease or not.
+
+Since $D$ can take on two values, we have two **conditional** probabilities:
+
+- $P(T = 1 | D = 1)$
+
+- $P(T = 1 | D = 0)$
+
+Read these as "the probability that $T = 1$ given $D = 1/0$", or "conditional on $D = 1/0$". Instead of the overall probability in the population, these values are probabilities that only apply to a subset of the population, in this case defined by the presence or absence of disease. We would expect that $P(T = 1 | D = 1) > P(T = 1 | D = 0)$ if the test is at least somewhat effective.
+
+Let's say that $P(T = 1 | D = 1) = 0.9$ and $P(T = 1 | D = 0) = 0.2$.
+
+```{r pT0D1, echo = F}
+question("What's $P(T = 0 | D = 1)$?",
+         answer("0.1", correct = T),
+         answer("0.2"),
+         answer("0.8"),
+         answer("0.9"),
+         answer("Not enough information", message = "What do probabilities sum to?"),
+         allow_retry = T
+        )
+```
+
+Conditional probabilities behave like unconditional probabilities! We need the conditional probabilities (given a single condition, like $D = 1$) to add up to 1 over all the possible values of the random variable $T$. So $P(T = 0 | D = 1)$ must be 0.1, and $P(T = 0 | D = 0)$ must be 0.8.
+
+However, the probabilities $P(T = 1 | D = 1)$ and $P(T = 1 | D = 0)$ aren't required to relate to each other in any particular way (though we are often trying to investigate such relationships, and in this case we can make a reasonable assumption about which is greater). 
+
+We'll see later how we can use all our information to calculate the **marginal** probability $P(T = 1)$.
+
+#### Tables in R
+
+Let's see how we could look at this data in R. 
+
+Imagine we have access to the entire population's disease and test status. In that case, the proportion of people with disease will correspond with the probability that any randomly chosen one of them has disease. In the real world, we'll only have access to a sample and will have to estimate these probabilities -- this is why we need statistics, but we'll get to that later. 
+
+Since $P(D = 1) = 0.3$, let's create a population in which exactly 30% of observations have $D = 1$ and 70% $D = 0$. Using a population size of $n = 100$, create a vector `disease` with this data.
+
+```{r disease-prep, echo = F}
+n <- 100
+disease <- c(rep(1, n * 0.3), rep(0, n * 0.7))
+test <- c(rep(1, n * 0.3 * 0.9), rep(0, n * 0.3 * 0.1), rep(1, n * 0.7 * 0.2), rep(0, n * 0.7 * 0.8))
+dat <- data.frame(disease, test)
+```
+
+```{r disease, exercise = TRUE, exercise.lines = 2}
+n <- 100
+
+```
+
+```{r disease-hint-1, error = TRUE}
+n <- 100
+disease <- # try using the rep() function twice within the c() function
+```
+
+```{r disease-hint-2}
+n <- 100
+disease <- c(rep(1, n * 0.3), rep(0, n * 0.7))
+```
+
+How can we confirm that $P(D = 1) = 0.3$ in our population? Well, the mean of a binary variable is its probability. Taking the mean of the variable in this population means summing up all the 0/1 values and dividing by $n$ -- this gives us the proportion that are equal to 1. We did this when we were looking at coin flips; now we'll use the `mean()` function to shorten our code.
+
+```{r diseaseProp, exercise = TRUE, exercise.lines = 1, exercise.setup = "disease-prep"}
+mean(disease)
+```
+
+We also know that $P(T = 1 | D = 1) = 0.9$ and $P(T = 1 | D = 0) = 0.2$. I'll provide you with the vector `test` which has the appropriate values (1s and 0s) for our population's test status. Look at the vector to make sure it looks like what you'd expect.
+
+```{r test, exercise = TRUE, exercise.lines = 2, exercise.setup = "disease-prep"}
+length(test)
+head(test)
+```
+
+It's not a great idea to have your data hanging out in separate individual vectors, though. We want it all in the same dataset so that we can make sure that the first person's data is all together, as is the second person's, etc. The type of object that we'll use is called a "dataframe" in R (notice the function `data.frame()` has a period in it). You can combine vectors of any class into a dataframe, as long as they're all the same length. We'll call our data `dat` (you don't want to use the name `data` because it's the name of a function in R). 
+
+```{r dataframe, exercise = TRUE, exercise.setup = "disease-prep", exercise.lines = 2}
+dat <- data.frame(disease, test)
+head(dat)
+```
+
+Again we can look at the first chunk of our data using the `head()` function, but another function is often more useful for getting an idea of what's in a dataframe: `summary()`.
+
+```{r dataframeSum, exercise = TRUE, exercise.setup = "disease-prep", exercise.lines = 1}
+summary(dat)
+```
+
+This command tells us the names of our variables as well as some summary statistics about them (when we have datasets that contain non-numeric data, it will also tell us about what types of variables we have). It's helpful to make sure everything is what you would expect and in the form you want it.
+
+When we want to reference a specific variable's values in a dataframe, we use the format `dataframe$variable`. To confirm that the data on disease status in our dataframe is the same as we started with, run the command `mean(dat$disease)` in the window below. The vector `disease` you created before is the exact same vector you get when you call `dat$disease`. You can also use other functions you know directly on that variable, such as `head()` and `length()`. 
+
+```{r meanDat, exercise = TRUE, exercise.setup = "disease-prep", exercise.lines = 1}
+
+```
+
+Now let's confirm that $P(T = 1 | D = 1) = 0.9$ and $P(T = 1 | D = 0) = 0.2$. There are a couple of ways we can do that: tables and subsetting. Let's start with tables.
+
+The `table()` function makes a frequency table with whatever variables we include in the parentheses. Remember that since they're in a dataframe, we need to use the `$` format to access them:
+
+```{r tableDat1, exercise = TRUE, exercise.setup = "disease-prep", exercise.lines = 1}
+table(dat$disease)
+```
+
+When we just include one variable in the parentheses, we learn how many observations there are with each of the values of the variable. However, for our purposes, since we are looking at one variable within strata of another, we can start to get what we're looking for by putting both variables in the parentheses:
+
+```{r tableDat2, exercise = TRUE, exercise.setup = "disease-prep", exercise.lines = 1}
+table(dat$disease, dat$test)
+```
+
+This table would be more useful with a couple of changes. Let's first add the marginal totals. To do that we use the function `addmargins()`, which operates on a table object (so we create the table inside the parentheses).
+
+```{r tableMarg, exercise = TRUE, exercise.setup = "disease-prep", exercise.lines = 1}
+addmargins(table(dat$disease, dat$test))
+```
+
+Similarly, `prop.table()` operates on a table object (so you can't pass it the variables directly -- don't make that common mistake) and converts the values to proportions. Without extra arguments, these are calculated to sum to 1 across all the cells, but you can also use the argument `margin = ` with a value of either 1 (by row) or 2 (by column) in order to calculate row or column proportions. Experiment with this function and the `margin = ` argument. What code would you use to find $P(T = 1 | D = 1)$ and $P(T = 1 | D = 0)$?
+```{r tableProp, exercise = TRUE, exercise.setup = "disease-prep", exercise.lines = 3}
+
+```
+
+```{r tableProp-solution}
+prop.table(table(dat$disease, dat$test), margin = 1)
+```
+
+Tables are easy when the data are discrete, especially with only two possible values. In general, though, if we want to know something about a subset of the population (like the conditional probabilities we've been looking at, but also things like a conditional median or maximum value), we can subset the data directly and perform whatever function we want on that portion of the dataset.
+
+The `subset()` function can take as a first argument a dataframe, and as the second (`subset = `) a logical expression that will evaluate to `TRUE` for those observations we want to keep. (It can also be used to select the variables we want to retain with the `select = ` argument. Look at the help file for more details and examples.)
+
+In order to parallel the conditional probabilities we are exploring, we'll make two new datasets, one for $D = 1$ and the other for $D = 0$. Then we'll simply look again at the mean of the 0/1 `test` variable, but this time within each of the new dataframes separately. 
+```{r subset, exercise = TRUE, exercise.setup = "disease-prep", exercise.lines = 4}
+d1 <- subset(dat, subset = disease == 1)
+d0 <- subset(dat, subset = disease == 0)
+mean(d1$test)
+mean(d0$test)
+```
+Does this match what you got before? Note that we now have three datasets hanging out in our R "environment": the full data in `dat`, and the two subsets of the data in `d1` and `d0`. In R you can work with many datasets and objects at the same time -- you just need to make sure you don't get them mixed up!
+
+#### More resources
+There is a lot of great information about conditional probabilities [here](https://www.khanacademy.org/math/statistics-probability/probability-library/conditional-probability-independence/v/calculating-conditional-probability).

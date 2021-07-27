@@ -1,0 +1,140 @@
+## Quick detour into calculus
+Many classes on probability and statistics require multivariable calculus. That is certainly not a prerequisite for PHS 2000. However, a tiny bit of calculus will show up at some points during the year. You won't need to solve complicated integrals or anything, just understanding the relationship between integrals and derivatives and what they can tell us about functions. We'll review the concepts briefly here, but if you feel like you might need more review, check out the links below. (If you have never taken calculus, don't run to sign up for a whole class. See if you can get what you need from this content and perhaps some of the links, and contact us if you have any questions or want more references.)
+
+#### Derivatives
+
+The basic idea of a derivative is that it describes the rate of change of a function. If the function we're looking at is $g(x)$, then there are a couple of ways we usually notate the first derivative of $g(x)$, which we'll use interchangeably:
+$$g'(x) = \frac{d}{dx}g(x)$$
+Both equivalently tell us that we are looking at the function $g(x)$ and taking the first derivative with respect to the variable $x$. That means that as $x$ changes, we want to know how much $g(x)$ changes. This is just the slope of $g(x)$ at a given value of $x$.
+
+```{r slope1, echo = F}
+curve(dexp(x, rate = 3), xlim = c(0, 2), ylab = "g(x)")
+```
+
+```{r greatest1, echo = F}
+question("On the graph above, where is $g'(x)$ greatest?",
+    answer("x = 0", message = "Remember that $g'(x) < 0$"),
+    answer("x = 1", message = "Remember that $g'(x) < 0$"),
+    answer("x = 2", correct = TRUE),
+    allow_retry = T
+  )
+```
+
+```{r slope2, echo = F}
+curve(dchisq(x, 4), xlim = c(1, 4), ylab = "g(x)")
+```
+
+```{r greatest2, echo = F}
+question("On the graph above, where is $g'(x)$ greatest?",
+    answer("x = 1", correct = TRUE),
+    answer("x = 2"),
+    answer("x = 3"),
+    answer("x = 4"),
+    allow_retry = T
+  )
+```
+
+```{r equal0, echo = F}
+question("On the same graph above, where does $g'(x) = 0$?",
+    answer("x = 1"),
+    answer("x = 2", correct = TRUE),
+    answer("x = 3"),
+    answer("x = 4"),
+    allow_retry = T
+  )
+```
+
+As we can see above, when the first derivative is 0, the function may have reached a maximum. (This is the case if $g'(x) > 0$ just prior to the value at which $g'(x) = 0$, and  $g'(x) < 0$ just after. Confirm for yourself that this is true on the graph above.)
+
+It also may have reached a minimum, as at $x = 0.5$ on the graph below.
+
+```{r slope3, echo = F}
+curve(dbeta(x, .2, .2), xlim = c(0, 1), ylab = "g(x)")
+```
+
+This tells us that if we want to find the value of $x$ that maximizes or minimizes a function, we can take its first derivative $g'(x)$ and figure out where $g'(x) = 0$.
+
+Let's find a maximum. If $g(x) = -2x^2 + x - 3$, then $g'(x) = - 4x + 1$ (if you're not sure how we got that, you can review the [power rule](https://www.khanacademy.org/math/ap-calculus-ab/ab-derivative-rules/ab-power-rule/v/power-rule), but you won't be asked to compute derivatives, only understand why you might do so).
+
+```{r minX, echo = F}
+question("Which value of $x$ maximizes $g(x) = -2x^2 + x - 3$?",
+    answer("x = -4"),
+    answer("x = -1/4"),
+    answer("x = 0"),
+    answer("x = 1"),
+    answer("x = 1/4", correct = TRUE),
+    answer("x = 4"),
+    allow_retry = T
+  )
+```
+
+Let's confirm by looking at the graphs of $g(x)$ and $g'(x)$.
+
+```{r slope4, echo = F}
+par(mfrow = c(1, 2))
+curve((-2*x^2 + x - 3), xlim = c(-3, 4), ylab = "g(x)", main = expression(-2*x^2 + x - 3))
+abline(h = -2.875, lty = "dotted", col = "grey")
+abline(v = .25, lty = "dotted", col = "grey")
+curve((-4*x + 1), xlim = c(-3, 4), ylab = "g'(x)", main = expression(-4*x + 1))
+abline(h = 0, lty = "dotted", col = "grey")
+abline(v = .25, lty = "dotted", col = "grey")
+par(mfrow = c(1, 1))
+```
+
+Of course, without looking at the graph, we didn't actually know whether the point at which $g'(x) = 0$ was a minimum or a maximum. We could differentiate again to check whether the second derivative was positive (a minimum) or negative (a maximum), but we don't need to practice that (though you can if you want to!).
+
+The important thing is that you understand that one way to maximize a function is to differentiate it. Specifically, the steps are: find the first derivative, set it to 0, and solve (then check the second derivative to confirm it's a maximum).
+
+Sometimes, however, functions are hard to differentiate or finding roots for their derivatives is difficult. In that case we may use other methods to maximize them. We won't go into details, but imagine climbing the function above ($g(x) = -2x^2 + x - 3$) like a hill. Every few steps you calculate the slope in the small area around you. If the slope is getting closer to 0 (getting flatter), you keep going forward; if you're going downhill, you turn around and head back. You keep walking around and checking the slope around you, moving closer to where it's exactly 0, until you're at the top of the hill and you've maximized the function.
+
+#### Integrals
+
+Another way we might want to describe a function is by the area under its curve. Whereas the derivative gave us an idea of the instantaneous rate of change of a function, an integral tells us how much cumulative space a function is covering (in terms of distance from the x-axis) as x gets larger. 
+
+For example, in the graph of $f(x) = 2x^3 + 3x^2 + 4$ below, the area in blue is represented by the integral
+$$\int_{-2}^{2} 2x^3 + 3x^2 + 4 \; dx$$
+```{r index-3, echo = F}
+func <- function(x) 2*x^3 + 3*x^2 + 4
+curve(func, xlim = c(-2, 3), ylab = "f(x)")
+coord_x <- c(-2, seq(-2, 2, length.out = 1000), 2)
+coord_y <- c(0, func(seq(-2, 2, length.out = 1000)), 0)
+polygon(coord_x, coord_y, col = "skyblue")
+```
+
+The values at the top and bottom of the integral sign are those between which we're computing the integral. We could integrate over the whole function, from $- \infty$ to $\infty$, or choose other limits of integration:
+
+```{r index-4, echo = F}
+func <- function(x) 2*x^3 + 3*x^2 + 4
+curve(func, xlim = c(-2, 3), ylab = "f(x)")
+coord_x <- c(1, seq(1, 3, length.out = 1000), 3)
+coord_y <- c(0, func(seq(1, 3, length.out = 1000)), 0)
+polygon(coord_x, coord_y, col = "purple")
+```
+
+$$\int_{1}^{3} 2x^3 + 3x^2 + 4 \; dx$$
+```{r int, echo = F}
+question("Which limits of integration would lead to the largest integral for the above function?",
+    answer("-2, 2"),
+    answer("1, 3", correct = TRUE),
+    answer("0, 2"),
+    answer("-2, 0"),
+    allow_retry = T
+  )
+```
+
+If a function is non-negative, like the above function $f(x) = 2x^3 + 3x^2 + 4$ is between $x = -2$ and $x = 3$ (the function is always above the x-axis), then, if we set a constant lower limit, the integral increases with $x$. What this means is that 
+$$\int_{-2}^{-1} 2x^3 + 3x^2 + 4 \; dx \leq \int_{-2}^{0} 2x^3 + 3x^2 + 4 \; dx \leq\int_{-2}^{1} 2x^3 + 3x^2 + 4 \; dx \leq \int_{-2}^{2} 2x^3 + 3x^2 + 4 \; dx$$
+and so on. On the graph, the area under the curve can only accumulate area, so the integral evaluated at greater and greater upper limits can only increase.
+
+#### Fundamental theorem of calculus
+
+The fundamental theorem of calculus relates the two concepts of differentiation and integration. If we have a function $f(x)$ over the interval $[a, b]$, we can define another function
+$$F(x) = \int_a^x f(x) \; dx$$
+What this means is that, for any $x$ in $[a, b]$, our new function $F(x)$ is the integral of $f(x)$ from the beginning of that interval to the point $x$.
+
+We can then say that
+$$f(x) = F'(x)$$
+That is, the function inside the integral is the first derivative of the function that was defined *as* the integral. In other words, derivatives and integrals work like inverse operations. We'll see in the next section how this relationship helps us understand probability distributions.
+
+#### More resources
+[Here](https://www.khanacademy.org/math/calculus-home/taking-derivatives-calc) is a **lot** of information about derivatives. You don't need more than the first few videos. Same with [this](https://www.khanacademy.org/math/calculus-home/integral-calculus/definite-integrals-intro-ic) intro to integrals. Watch the video on antiderivatives and indefinite integrals from [this](https://www.khanacademy.org/math/calculus-home/integral-calculus/indefinite-integrals) page and some of those on [this](https://www.khanacademy.org/math/calculus-home/integral-calculus/fundamental-theorem-of-calculus-ic) page to understand the link between derivatives and integrals.

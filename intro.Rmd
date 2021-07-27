@@ -1,0 +1,153 @@
+## Intro to R
+
+The first line in following block of code assigns (`<-`) the value 3 to the object `x`. Think of `x` as storing that value: whenever you print `x` (as the second line does), or use it in a function (as in the third line), it is replaced by the value 3.
+```{r intro1, exercise = TRUE}
+x <- 3
+x
+x + x
+```
+
+Note that, after you run the code, there are two lines of output below the code window. These correspond to each of the lines of code that printed something (the first line assigned but did not print anything; lines with `<-` will generally not produce output, just store, or "save" it to an object). 
+
+If you want, you can just use R as a calculator. Whenever you create something but don't assign it anywhere (i.e., no `<-`), it will just print out the result. Try multiplying 283 $\times$ 598 in the box below:
+
+```{r multiply, exercise = TRUE, exercise.lines = 1}
+
+```
+
+Did you get 169,234? You can do all the normal stuff you'd expect to do with a calculator. Some examples are below, but feel free to play around. Notice first that there are "comments" on several of the lines of code. Everything that follows a `#` sign is not evaluated by R, so you can use comments to explain what your code does or why you're doing it.
+
+```{r calc, exercise = TRUE}
+283 * 598
+5 ^ 2 # exponents
+log(1) # the default logarithm is the natural log, i.e., ln
+exp(0) # e^0
+sqrt(25)
+(4 + 1) * (8 / 2) ^ 3 # expressions follow normal order of operations
+```
+
+The above examples were all printed out directly, but we could also assign them to objects, as well as perform functions with them. Objects have case-sensitive names and have certain restrictions like not starting with a number, but other than that, you can basically name things whatever you want. Try to be reasonable, though -- you want your code to be readable and logical. (For more good R practices, check out this [style guide](http://adv-r.had.co.nz/Style.html). You are by no means required to follow it to the letter, but it is always helpful to see how other people format their code.)
+
+Can you figure out what value the object `grape` holds? Write a 4th line of code to print the object and see if you are right.
+```{r assign, exercise = TRUE, exercise.lines = 4}
+banana <- 5 ^ 2
+apple <- sqrt(banana)
+grape <- banana - banana / apple
+```
+
+```{r assign-solution}
+grape
+```
+
+Sometimes you'll accidentally do things that are not allowed in R. In this case, you'll get an error message. Some messages are more helpful than others; if you can't figure out what an error message is trying to tell you, it's often helpful to just copy and paste into Google, because chances are someone has had a similar error. Run these lines of code to see the error messages you get (and start to get used to connecting the unhelpful language with the type of problem that produced such an error).
+```{r error1, exercise = TRUE, exercise.lines = 2, error = TRUE}
+2 <- x 
+# can't assign something to a number
+```
+```{r error2, exercise = TRUE, exercise.lines = 2, error = TRUE}
+4 % 2 
+# not a function
+```
+```{r error3, exercise = TRUE, exercise.lines = 2, error = TRUE}
+blah 
+# we haven't made an object called blah
+```
+```{r error4, exercise = TRUE, exercise.lines = 2, error = TRUE}
+sqrt("4") 
+# putting the 4 in quotes makes it a character string, not a number
+```
+ 
+#### Quick math review
+
+We saw above that we can use R to do math ... but you need some mathematical intuition as well! One of the most important mathematical concepts to be familiar with for the purposes of PHS 2000 is how exponents and logarithms relate and the ways in which they can be manipulated.
+
+Most of the time in probability and statistics, we use the natural logarithm $\ln(x)$, which we often write as $\log(x)$, and the natural exponential function $e^x$, which we also write as $\exp(x)$. Recall that these are inverse functions:
+$$\exp(x) = y \iff x = \log(y)$$
+so if one side of an equation is exponentiated, we can always "get out of it" by applying a logarithm to both sides, and vice versa.
+
+When we have a sum inside an exponent, we can decompose this into the product of two exponents: 
+$$\exp(a + b) = \exp(a)\exp(b)$$
+Similarly, a product inside a logarithm can be written as a sum of logs: 
+$$\log(ab) = \log(a) + \log(b)$$
+Of course, the same is true of the inverses of addition and multiplication, subtraction and division:
+$$\exp(a - b) = \frac{\exp(a)}{\exp(b)}$$
+$$\log\left(\frac{a}{b}\right) = \log(a) - \log(b)$$
+If we look at these functions on a graph, we can gain some intuition for a few important values you should know.
+```{r expGraph, echo = F}
+curve(exp(x), xlim = c(-4, 4), ylab = "exp(x)", xlab = "x", main = "exp(x)")
+abline(h = 0, lty = "dashed")
+points(0, 1, col = "red")
+```
+
+We can see that $\lim_{x\to-\infty} \exp(x) = 0$ and $\lim_{x\to\infty} \exp(x) = \infty$. Somewhere in between, we have that $\exp(0) = 1$. This is useful to know since probabilities can only take on values between 0 and 1, so exponentiating a negative number will give you such a value. It is also important to remember that exponentiating something can *only* give you a positive number (so check your work if that's not what you get!).
+
+```{r logGraph, echo = F}
+curve(log(x), xlim = c(0, 4), ylab = "log(x)", xlab = "x", main = "log(x)")
+abline(h = 0, lty = "dashed")
+points(1, 0, col = "red")
+```
+
+Because of the inverse relationship of these functions, you can only "log" a positive number. Something like $\log(-1)$ is undefined. We can see that $\lim_{x \to 0}\log(x) = -\infty$, and $\log(x)$ increases in $x$ much more slowly than $\exp(x)$. Importantly, $\log(1) = 0$, so $\log(x)$ for any $x$ between 0 and 1 will give you a negative number. 
+
+You already confirmed above in R that $\log(1) = 0$ and $\exp(0) = 1$. Let's see what we get when we reach the limits of those functions, or when we try to log something outside of its domain. In R, $\infty$ is represented by `Inf`, and you can actually use it in functions. It will also be what's returned to you as soon as a number is "too big", even if it's not actually infinite. Until you reach that point, very large (and very small) numbers are represented with scientific notation, so $\exp(700) = 1.01 \times 10^{304}$ and $\exp(-700) = 9.86 \times 10^{-305}$, as you can see when you run the code below.
+
+```{r inf, exercise = TRUE, exercise.lines = 4}
+exp(-Inf)
+exp(700)
+exp(710)
+exp(-700)
+```
+
+If you try to do something that is undefined, like take the log of a negative number, you get `NaN`, which stands for "not a number." Interestingly, according to R, $\frac{0}{0}$ is not a number but $\frac{1}{0}$ is infinite, because R is actually returning limits when it returns `Inf` and `-Inf`, which is why we can also evaluate something like $\exp(\infty)$.
+```{r nan, exercise = TRUE, exercise.lines = 4}
+log(-1)
+0/0
+1/0
+exp(Inf)
+```
+ 
+#### *Practice*
+
+**Rearrange these lines of code so that they all run with no errors and the last line prints the value 10.**
+
+```{r prac1a, exercise = TRUE, error = TRUE}
+broccoli <- lettuce * 2 / (tomato ^ 2)
+broccoli
+carrot
+carrot <- broccoli + tomato
+tomato <- 2
+tomato
+lettuce <- 4 ^ tomato
+```
+
+```{r prac1a-solution}
+tomato <- 2
+tomato
+lettuce <- 4 ^ tomato
+broccoli <- lettuce * 2 / (tomato ^ 2)
+broccoli
+carrot <- broccoli + tomato
+carrot
+```
+
+
+**Translate the following math into code:**
+$$\log(43 \times 11 + 3!) - \sqrt{e^{(\pi / 7)}} \times \cos(0)$$
+```{r prac1c, exercise = TRUE, exercise.lines = 1}
+
+```
+
+```{r prac1c-hint-1}
+factorial(3) # = 3!
+```
+
+```{r prac1c-hint-2}
+cos(pi) # = -1
+```
+
+```{r prac1c-hint-3}
+log(43 * 11 + factorial(3)) - sqrt(exp(pi/7)) * cos(0)
+```
+
+#### More resources
+Start [here](https://www.khanacademy.org/math/pre-algebra/pre-algebra-exponents-radicals/pre-algebra-exponent-properties/v/exponent-properties-involving-products) if you need more practice with exponents; [here](https://www.khanacademy.org/math/algebra2/exponential-and-logarithmic-functions) for more practice with logarithms.

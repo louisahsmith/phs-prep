@@ -1,0 +1,424 @@
+## Matrix notation and multiplication
+We often use matrix notation in statistics because it is much simpler when we are working with multiple variables. Matrix multiplication allows us to easily compute sums and products across a number of variables. Let's review the rules, but first let's define the types of objects we're working with. 
+
+\[a = a \text{ , a scalar}\]
+
+\[
+\mathbf{b} = \begin{bmatrix}
+b_1 \\ b_2 \\ \vdots \\ b_p
+\end{bmatrix} \text{ , a vector of length $p$}
+\]
+
+
+\[
+\mathbf{X} = \begin{bmatrix}
+x_{11} & x_{12} & \cdots & x_{1p} \\ 
+x_{21} & x_{22} & \cdots & x_{2p} \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+x_{n1} & x_{n2} & \cdots & x_{np}
+\end{bmatrix} \text{ , an $n \times p$ matrix}
+\]
+
+A scalar is just a single value. A vector is a column of values (e.g., observations of random variables or estimates of parameters) and can also be considered a $p \times 1$ matrix. Note that when we label the dimensions of a matrix or index its values, we do it in the order $rows \times columns$. This is also the order in which matrices are indexed in R, so make sure you memorize it. Vectors and matrices are often written in bold to make it clear they are not scalars.
+
+When we multiply a scalar by a vector or a matrix, we can just do so element by element:
+
+\[a\mathbf{b} = \begin{bmatrix}
+ab_1 \\ ab_2 \\ \vdots \\ ab_p
+\end{bmatrix}
+\hspace{1cm} 
+a\mathbf{X} = \begin{bmatrix}
+ax_{11} & ax_{12} & \cdots & ax_{1p} \\ 
+ax_{21} & ax_{22} & \cdots & ax_{2p} \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+ax_{n1} & ax_{n2} & \cdots & ax_{np}
+\end{bmatrix}
+\]
+
+However, when we multiply vectors and matrices, we need special rules. We can only multiply vectors of the same length, but we have to "transpose" one before we can do so. Consider two vectors of length $p$, $\mathbf{b}$ and $\mathbf{c}$.
+
+\[
+\mathbf{b}^T\mathbf{c} = \begin{bmatrix}
+b_1 \\ b_2 \\ \vdots \\ b_p
+\end{bmatrix}^T
+\begin{bmatrix}
+c_1 \\ c_2 \\ \vdots \\ c_p
+\end{bmatrix} = 
+\begin{bmatrix}
+b_1 & b_2 & \cdots & b_p
+\end{bmatrix}
+\begin{bmatrix}
+c_1 \\ c_2 \\ \vdots \\ c_p
+\end{bmatrix}
+\]
+
+The superscript $T$ in between the vectors stands for "transpose" (an apostrophe is sometimes used instead, as in $\mathbf{b}'\mathbf{c}$) and indicates that a vector or matrix should kind of tip over: all its columns become rows instead. That's why $\mathbf{b}$ becomes a row vector (or $1 \times p$ matrix). The reason we do this is because we need dimensions to match up when we multiply vectors and matrices. That is because the number of elements in a row on the left ($\mathbf{b}^T$) must equal the number of elements in a column on the right ($\mathbf{c}$), so that we can multiply the corresponding elements and then sum over their products. Let's look at $\mathbf{b}^T\mathbf{c}$, where there is just one column-row pair to multiply and sum:
+
+\[
+\begin{bmatrix}
+b_1 & b_2 & \cdots & b_p
+\end{bmatrix}
+\begin{bmatrix}
+c_1 \\ c_2 \\ \vdots \\ c_p
+\end{bmatrix} = 
+b_1c_1 + b_2c_2 + \cdots + b_pc_p
+= \sum_{i = 1}^p b_ic_i
+\]
+
+We'll also use the summation notation above a great deal. All three expressions tell us that we are summing over the products of each of the individual pairs of elements in the vectors $\mathbf{b}$ and $\mathbf{c}$. It is clear why only two vectors of the same length can be multiplied. And think about what results from that multiplication: just a scalar (i.e., the product is of dimension $1\times1$).
+
+One situation that occurs often in statistics is the product of a vector with itself:
+
+\[
+\mathbf{b}^T\mathbf{b} = \sum_{i = 1}^p b_i^2
+\]
+
+Matrix notation makes it easy to write down a sum of squares.
+
+When we multiply a vector by a matrix, the same idea applies, only this time we have more rows or columns to sum over.
+
+\[
+\mathbf{X}\mathbf{b} = 
+\begin{bmatrix}
+x_{11} & x_{12} & \cdots & x_{1p} \\ 
+x_{21} & x_{22} & \cdots & x_{2p} \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+x_{n1} & x_{n2} & \cdots & x_{np}
+\end{bmatrix} \begin{bmatrix}
+b_1 \\ b_2 \\ \vdots \\ b_p
+\end{bmatrix} = 
+\begin{bmatrix}
+x_{11}b_1 + x_{12}b_2 + \cdots x_{1p}b_p  \\
+x_{21}b_1 + x_{22}b_2 + \cdots x_{2p}b_p  \\
+\vdots \\
+x_{n1}b_1 + x_{n2}b_2 + \cdots x_{np}b_p 
+\end{bmatrix}
+\]
+
+If this is a new concept to you, study carefully what just happened. We multiplied the elements of the first row of $\mathbf{X}$ with those over the column vector $\mathbf{b}$ and summed: this became the first element of our new product (i.e., just like the scalar that results from the vector-vector multiplication above).Then we multiplied the second row of $\mathbf{X}$ with the column vector $\mathbf{b}$; this became the second element of the new product, and so on. The product in its entirety is just a vector of length $n$.
+
+Let's look at some other ways we could write this same product:
+
+\[
+\mathbf{X}\mathbf{b} = 
+\begin{bmatrix}
+\mathbf{x_1}^T\mathbf{b}\\
+\mathbf{x_2}^T\mathbf{b}\\
+\vdots \\
+\mathbf{x_n}^T\mathbf{b}\\
+\end{bmatrix} =
+\begin{bmatrix}
+\sum_{i = 1}^p x_{1i}b_i\\
+\sum_{i = 1}^p x_{2i}b_i\\
+\vdots \\
+\sum_{i = 1}^p x_{ni}b_i\\
+\end{bmatrix}
+\]
+
+The $\mathbf{x_1}^T\mathbf{b}$ form illustrates how each element is just a vector-vector product, where one vector is a row of $\mathbf{X}$ (so if we consider it as a column vector, must be transposed), which is lower-case and indexed by its row number to make clear that each is a different vector from that matrix. In each case, it should be clear that we're using the same $\mathbf{b}$ vector in each new element of our product, but a different one of the $n$ rows of $\mathbf{X}$. 
+
+Again the ideas extend to matrix-matrix multiplication. Let's multiply the $m\times n$ matrix $\mathbf{Y}$ by $\mathbf{X}$. The subscripts on the matrices below are used to clarify the dimensions (and provide an easy check that they are compatible). First we multiply the first row of $\mathbf{Y}$ and the first column of $\mathbf{X}$ -- this is the $1,1$ element of our resulting matrix, which we'll call $\mathbf{Z}$. The appropriate rows are boldface just to show at each step the row and column that are multiplied and the placement in the resulting matrix.
+
+\[
+\mathbf{Y}_{m\times n}\mathbf{X}_{n\times p}
+\]
+\[
+= \begin{bmatrix}
+\mathbf{y_{11}} & \mathbf{y_{12}} & \cdots & \mathbf{y_{1n}} \\ 
+y_{21} & y_{22} & \cdots & y_{2n} \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+y_{m1} & y_{m2} & \cdots & y_{mn}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{x_{11}} & x_{12} & \cdots & x_{1p} \\ 
+\mathbf{x_{21}} & x_{22} & \cdots & x_{2p} \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+\mathbf{x_{n1}} & x_{n2} & \cdots & x_{np}
+\end{bmatrix} = 
+\begin{bmatrix}
+\mathbf{z_{11}} &  & \cdots &  \\ 
+ &  & \cdots & \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+ &  & \cdots & 
+\end{bmatrix}
+\]
+
+\[ = \begin{bmatrix}
+\mathbf{y_{11}} & \mathbf{y_{12}} & \cdots & \mathbf{y_{1n}} \\ 
+y_{21} & y_{22} & \cdots & y_{2n} \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+y_{m1} & y_{m2} & \cdots & y_{mn}
+\end{bmatrix}
+\begin{bmatrix}
+x_{11} & \mathbf{x_{12}} & \cdots & x_{1p} \\ 
+x_{21} & \mathbf{x_{22}} & \cdots & x_{2p} \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+x_{n1} & \mathbf{x_{n2}} & \cdots & x_{np}
+\end{bmatrix} = 
+\begin{bmatrix}
+z_{11} & \mathbf{z_{12}} & \cdots &  \\ 
+ &  & \cdots & \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+ &  & \cdots & 
+\end{bmatrix}
+\]
+
+\[ = \begin{bmatrix}
+y_{11} & y_{12} & \cdots & y_{1n} \\ 
+\mathbf{y_{21}} & \mathbf{y_{22}} & \cdots & \mathbf{y_{2n}} \\
+\vdots &\vdots & \ddots & \vdots \\ 
+y_{m1} & y_{m2} & \cdots & y_{mn}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{x_{11}} & x_{12} & \cdots & x_{1p} \\ 
+\mathbf{x_{21}} & x_{22} & \cdots & x_{2p} \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+\mathbf{x_{n1}} & x_{n2} & \cdots & x_{np}
+\end{bmatrix} = 
+\begin{bmatrix}
+z_{11} & z_{12} & \cdots &  \\ 
+\mathbf{z_{21}} &  & \cdots & \\ 
+\vdots &\vdots & \ddots & \vdots \\ 
+ &  & \cdots & 
+\end{bmatrix}
+\]
+
+and so on until every row-column combination of $\mathbf{Y}$ and $\mathbf{X}$ respectively has been multiplied to form an element of $\mathbf{Z}$. As before, each of those elements is the sum of the products of the corresponding elements in $\mathbf{Y}$ and $\mathbf{X}$.
+
+Think about each of those remaining steps necessary to fill in the rest of $\mathbf{Z}$. 
+
+```{r dimZ, echo = F}
+question("What will be the dimensions of $\\mathbf{Z}$?",
+    answer("$n \\times p$"),
+    answer("$p \\times p$"),
+    answer("$m \\times p$", correct = TRUE),
+    answer("$n \\times m$"),
+    answer("$n \\times n$"),
+    allow_retry = T
+  )
+```
+
+If you look back carefully at our examples, you'll notice a pattern. First we multiplied a row vector by a column vector, or a $1 \times p$ matrix by a $p \times 1$ matrix, and ended up with a scalar of dimension $1 \times 1$. Next we multiplied an $n \times p$ matrix by a $p \times 1$ vector and ended up with an $n \times 1$ vector. Finally, when we multiplied an $m \times n$ matrix by an $n \times p$ matrix, we got an $m \times p$ matrix.
+
+In each case, we need the *inner* pair of dimensions to match, and the *outer* pair is the dimension of the resulting matrix.
+
+$$\mathbf{Y}_{m\times n}\mathbf{X}_{n\times p} = \mathbf{Z}_{m \times p}$$
+
+Like we saw with the two vectors above, sometimes we need to "transpose" one of the objects to make the dimensions compatible. With a vector, this just meant turning it on its side. With a matrix, the idea is the same: the first row becomes the first column, the second row the second column, and so on. Let's look at a new matrix $\mathbf{Q}$:
+
+\[\mathbf{Q} = \begin{bmatrix}
+r & s & t \\
+u & v & w
+\end{bmatrix}
+\]
+
+\[\mathbf{Q}^T = \begin{bmatrix}
+r & u \\
+s & v \\
+t & w
+\end{bmatrix}
+\]
+
+If we wanted to multiply $\mathbf{Q}$ by itself (similar to squaring a number), first we need to transpose one of the matrices to make the dimension compatible:
+
+\[\mathbf{Q}^T\mathbf{Q} = \begin{bmatrix}
+r^2 + u^2 & rs + uv & rt + uw \\
+rs + uv & s^2 + v^2 & st + vw \\
+rt + uw & st + vw & t^2 + w^2
+\end{bmatrix}
+\]
+Now try writing out $\mathbf{Q}\mathbf{Q}^T$.
+```{r dimQQt, echo = F}
+question(" What will be the dimensions of $\\mathbf{Q}\\mathbf{Q}^T$?",
+    answer("$2 \\times 2$", correct = TRUE),
+    answer("$2 \\times 3$"),
+    answer("$3 \\times 2$"),
+    answer("$3 \\times 3$"),
+    answer("Doesn't exist; the dimensions aren't compatible"),
+    allow_retry = T
+  )
+```
+
+What do you notice about $\mathbf{Q}^T\mathbf{Q}$ and $\mathbf{Q}\mathbf{Q}^T$? They are special types of matrices called **symmetric** matrices. This means that the element in the $1,2$ position is the same as that in the $2,1$ position, the element in the $1,3$ position is the same as that in the $3,1$ position, and so on. The diagonal (which in these two cases consists of sums of squares) can be anything. Formally, a matrix is symmetric if it is equal to its own transpose, i.e., if $\mathbf{X} = \mathbf{X}^T$. Importantly, correlation and covariance matrices are always symmetric.
+
+There is a special symmetric matrix called the **identity** matrix. What this means is that we can multiply any matrix by the identity and get the same matrix we started with. When we're working with scalars only, the number 1 acts just like the identity: $a \times 1 = a$. When we're working with matrices, we use $\mathbf{I}$ to indicate the identity matrix: $\mathbf{XI} = \mathbf{X}$. We define the identity as the matrix with 1's on the diagonal and 0's on the off-diagonals, with whatever dimensions are necessary to be compatible with $\mathbf{X}$:
+
+\[\mathbf{I} = 
+\begin{bmatrix}
+1 & 0 & 0 & \cdots \\
+0 & 1 & 0 & \cdots \\
+0 & 0 & 1  &\cdots\\
+\vdots & \vdots & \vdots & \ddots
+\end{bmatrix}
+\]
+
+The identity matrix has a special property not generally true of matrices: $\mathbf{IX} = \mathbf{XI}$, meaning that it doesn't matter in which order you do the matrix multiplication. Except in special cases, this is not otherwise true: $\mathbf{XY} \neq \mathbf{YX}$. 
+
+There's one more important type of matrix you should know about. Like other functions, matrices can often be inverted. An inverse of a function is kind of like the function that takes you back to your starting point. For scalars, $a^{-1}=\frac{1}{a}$ is the multiplicative inverse of $a$: when we multiply the two together, we get 1. Similarly, for a square matrix $\mathbf{X}$, there sometimes exists an **inverse matrix** $\mathbf{X}^{-1}$ such that $\mathbf{X}^{-1}\mathbf{X} = \mathbf{I}$ and $\mathbf{X}\mathbf{X}^{-1} = \mathbf{I}$. 
+
+The process of finding $\mathbf{X}^{-1}$ is called inverting a matrix, but it's not always possible. In particular, if the row vectors or column vectors that make up $\mathbf{X}$ are not **linearly independent**, then the inverse $\mathbf{X}^{-1}$ doesn't exist. Linear independence occurs when none of the vectors can be written as a linear sum of the other vectors -- each holds unique information. An intuitive example of linear *dependence* is if you have data on a sample consisting of vectors of their ages at the time of survey, years of birth, and years surveyed. Since year surveyed = year of birth + age at survey, one of those vectors contains redundant information (it doesn't matter which one), and they are not linearly independent.
+
+Remember above when we saw that $a\mathbf{X}$ just meant multiplying each element in $\mathbf{X}$ by the scalar $a$? Well that means that we can factor values out of a matrix. This may give some intuition for the following rule: $(a\mathbf{X})^{-1} = \frac{1}{a}\mathbf{X}^{-1}$. We can in some sense invert $a$ and $\mathbf{X}$ separately, because $a$ is a scalar and can be factored out. We still have that $(\frac{1}{a}\mathbf{X}^{-1})(a\mathbf{X}) = \mathbf{I}$. 
+
+### Matrices and their multiplication in R
+```{r mat-prep, echo = F}
+set.seed(6789)
+vals <- rnorm(6)
+mat <- matrix(vals, nrow = 2, ncol = 3)
+vec1 <- 1:3
+vec2 <- 4:6
+other_mat <- matrix(rnorm(12), nrow = 3, ncol = 4)
+set.seed(6789)
+```
+We've seen vectors in R; now let's look at matrices, which are another type of object. Like vectors, but unlike dataframes, all the elements of a matrix in R must be of the same class. So we could have character matrices or logical matrices, but we'll just look at numerical matrices for now. To make a matrix we use the function `matrix()`, with the first argument a vector of the values we want to fill the matrix. These values get filled in column-by-column unless we specify `byrow = TRUE`. We tell R the dimensions of the matrix we want with the arguments `nrow = ` and `ncol = `.
+
+Compare the two matrices composed of random numbers from a standard normal distribution.
+```{r mat, exercise = TRUE, exercise.lines = 3, exercise.setup = "mat-prep"}
+vals <- rnorm(6)
+matrix(vals, nrow = 2, ncol = 3)
+matrix(vals, nrow = 2, ncol = 3, byrow = TRUE)
+```
+
+Notice how the rows and columns are labeled in square brackets. For the rows, the indexing value precedes a comma, for the columns, the index follows the comma. We can extract row or column vectors or single elements with the same approach. Try replacing the values in the square brackets to extract different pieces of this matrix.
+
+```{r matExt, exercise = TRUE, exercise.lines = 4, exercise.setup = "mat-prep"}
+mat
+mat[2,] # second row
+mat[,3] # third column
+mat[2,3] # 2,3 element
+```
+
+What happens if you use an index that is larger than the matrix itself?
+```{r matErr, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep", error = TRUE}
+mat[4,4]
+```
+
+Before we multiply anything, let's try out the transpose function `t()`, because we're going to need it. It does just what you'd expect.
+```{r transpose, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep"}
+t(mat)
+```
+
+You have to be careful doing vector and matrix multiplication in R because it requires special functions. If we just use the regular multiplication command `*`, we perform element-wise multiplication. Here we start with two vectors of length 3 and end up with another vector of length 3, whereas if we had performed true matrix multiplication we would have ended up with a scalar.
+```{r badMult, exercise = TRUE, exercise.setup = "mat-prep"}
+vec1 <- 1:3
+vec2 <- 4:6
+vec1 * vec2
+```
+
+Before running the following code, calculate the value we should get when multiplying the vectors `1, 2, 3` and `4, 5, 6` together. Then, to do true matrix multiplication, use the `%*%` function. 
+
+```{r goodMult, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep"}
+t(vec1) %*% vec2
+```
+
+Let's confirm our result with a very tedious way of multiplying the two vectors: by extracting the elements that need to be multiplied one at a time, and summing.
+
+```{r longMult, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep"}
+vec1[1] * vec2[1] + vec1[2] * vec2[2] + vec1[3] * vec2[3]
+```
+
+Notice how when we extract an element of a vector, we don't need a comma, because there is only one dimension we could be pulling from.
+
+Does that match with what you expected?
+
+Now let's try to predict how to multiply a vector and a matrix in R. Recalling that that `vec1` is a column vector of length 3 and `mat` is a $2 \times 3$ matrix, try to answer the following question.
+```{r matVecMult, echo = F}
+question("Which matrix-vector multiplication commands will run?",
+    answer("`vec1 %*% mat`"),
+    answer("`t(vec1) %*% mat`"),
+    answer("`t(vec1) %*% t(mat)`", correct = TRUE),
+    answer("`mat %*% vec1`", correct = TRUE),
+    answer("`t(mat) %*% t(vec1)`"),
+    answer("`t(mat) %*% vec1`"),
+    allow_retry = T
+  )
+```
+
+When we try to multiply objects with dimensions that aren't compatible, R gives us a warning.
+```{r matMultErr, exercise = TRUE, exercise.lines = 1, exercise.setup = "mat-prep", error = TRUE}
+vec1 %*% mat
+```
+
+Although it can be tempting to just try the `t()` function until something works, make sure you are calculating the product you expect and that it has the dimensions you expect. Use the box below to compare `t(vec1) %*% vec2` and `vec1 %*% t(vec2)`. Before you run the code, predict what you will see.
+
+```{r products, exercise = TRUE, exercise.lines = 2, exercise.setup = "mat-prep"}
+
+```
+
+Now let's multiply two matrices. Besides the $2 \times 3$ matrix `mat`, you also have access to a $3 \times 4$ matrix `other_mat`. 
+
+```{r dimRq, echo = F}
+question("What will be the dimension of the product of these two objects?",
+    answer("$2 \\times 3$"),
+    answer("$3 \\times 4$"),
+    answer("$3 \\times 2$"),
+    answer("$4 \\times 3$"),
+    answer("$2 \\times 4$", correct = TRUE),
+    answer("$4 \\times 2$"),
+    allow_retry = T
+  )
+```
+
+Multiply the two matrices `mat` and `mat_prod` and store their product in the object `mat_prod`. Then use the `class()` and `dim()` functions on that object to see if you ended up with a matrix with the right dimensions.
+
+```{r dimProd, exercise = TRUE, exercise.lines = 3, exercise.setup = "mat-prep"}
+
+```
+
+```{r dimProd-solution}
+mat_prod <- mat %*% other_mat
+class(mat_prod)
+dim(mat_prod)
+```
+
+One matrix that is very easy to create in R is the identity matrix $\mathbf{I}$. The function `diag()` has several uses. First of all, if you give it a square matrix (e.g., `diag(square_mat)`), it will pull off the diagonal elements as a vector. Secondly, it will create an identity matrix if instead of a matrix you give it a single number (e.g., `diag(6)`). The value will give it will be the dimension of the resulting matrix (recall that the identity matrix is always square).
+
+Explore what happens if you use the `diag()` function on a matrix that isn't square.
+```{r nonsquare, exercise = TRUE, exercise.lines = 2, exercise.setup = "mat-prep"}
+mat
+diag(mat)
+```
+
+Then look at what the identity matrix looks like:
+```{r idPlain, exercise = TRUE, exercise.lines = 1}
+diag(6)
+```
+
+Now create an identity matrix with which you can pre-multiply (as in $\mathbf{IX}$) `mat` and another with which you can post-multiply (as in $\mathbf{XI}$) `mat`. Store them as `id1` and `id2` and confirm that when you perform the appropriate multiplication, you end up with the original `mat` matrix.
+
+```{r ids, exercise = TRUE, exercise.lines = 5, exercise.setup = "mat-prep"}
+
+```
+
+```{r ids-solution}
+id1 <- diag(2)
+id2 <- diag(3)
+mat
+id1 %*% mat
+mat %*% id2
+```
+
+Finally, let's add in one more helpful function when working with matrices in R. The `solve()` function will find the inverse of a matrix, if it exists. First let's look at the error message we get when the inverse *doesn't* exist. We'll make a $3 \times 3$ matrix with columns made from the two vectors we already made, along with a third column that is just 2 times the first. This makes it so the columns of the matrix are **linearly dependent**, and it can't be inverted.
+
+```{r singular, exercise = TRUE, exercise.lines = 3, exercise.setup = "mat-prep", error = TRUE}
+mat3 <- cbind(vec1, vec2, 2*vec1)
+mat3
+solve(mat3)
+```
+
+Now let's put it all together. One expression that pops up a lot in statistics is $(\mathbf{X}^T\mathbf{X})^{-1}$. Create a $3 \times 2$ matrix `X` using random values from a standard normal distribution. Convert $(\mathbf{X}^T\mathbf{X})^{-1}$ into R code and store the object you create using whatever name you'd like. Then use other functions that you know to explore the object.
+
+```{r matFin, exercise = TRUE, exercise.lines = 6, exercise.setup = "mat_prep"}
+
+```
+
+```{r matFin-solution}
+X <- matrix(rnorm(6), ncol = 2, nrow = 3)
+obj <- solve(t(X) %*% X)
+class(obj)
+dim(obj)
+summary(obj)
+```
+
+#### More resources
+[This](https://www.khanacademy.org/math/precalculus/precalc-matrices) whole section has a lot of great information and practice with matrices. For a more advanced introduction, work through the sections on vectors, linear combinations, and linear dependence [here](https://www.khanacademy.org/math/linear-algebra/vectors-and-spaces). You can also pick and choose from the videos [here](https://www.khanacademy.org/math/linear-algebra/matrix-transformations), particularly those on functions and linear transformations.

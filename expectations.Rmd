@@ -1,0 +1,320 @@
+## Expectations and variance
+
+We've already seen a couple of ways we can describe distributions: $F(x)$ and $f(x)$. In particular, in the last section we saw how those are related for continuous distributions. However, we need some other tools to help us characterize distributions, particularly when we want to compare them.
+
+#### Expectations
+The expected value, or expectation, $E[X]$ tells us the average value of the random variable $X$: its mean.
+
+Expectations are calculated by summing or integrating $x \times f(x)$ over the real line. (We can sum for discrete random variables but have to integrate for continuous random variables.) 
+$$\text{E}[X] = \sum_{x \in \mathcal{X}} x\, f(x)$$
+
+$$\text{E}[X] = \int_{-\infty}^{\infty} x\, f(x)\, dx$$
+Remember that $f(X)$ is like a relative probability for continuous random variables (and of course, the actual probabilities $P(X = x)$ for discrete variables). So what these expressions are saying is that to find the average value of the random variable $X$, we have to weight all the values it can take on by their relative probabilities. (In the summation notation, the $x \in \mathcal{X}$ just means that we sum over all the possible values $X$ can take on.)
+
+Think about the Normal($0, 1$) distribution. The normal distribution has support over the entire real line, which means that the probability $P(X \leq -2,534,623,623) \neq 0$, and $P(X > 8,134,235,214) \neq 0$, to take some arbitrary values. However, the density $f(x)$ evaluated at those is so, so small that it's basically 0. In other words, it's *incredibly* unlikely that we'd ever draw values around those numbers from an N($0, 1$) distribution (think about the maximum and minimum values from your standard normal sample in the last section -- were they anywhere near that?). That means when we integrate over extreme values like those, they get basically no weight. 
+
+We saw that the standard normal density is highest around 0. You can think of the integral as sweeping over all the possible values: when it gets to those around 0, such as -0.5 or 0.25, it weights them higher, and it weights those the closest to 0 the most. Because in the case of the normal, $f(x)$ is symmetric, negative values get weighted equally to their positive counterparts, so $E[X] = 0$. Of course! The 0 in $N(0, 1)$ already told us that its mean is 0!
+
+If we have a N($3, 4$) distribution, it's still symmetric, but now symmetric around another value:
+```{r otherNorm, echo = F}
+curve(dnorm(x, 3, 2), xlim = c(-4, 10), main = "Normal(3, 4) pdf", ylab = "density")
+```
+
+Now the weights that values around 2 get are the same as those around 4, since $f(2) = f(4)$. Same with $0$ and $6$. See how this is going to average out to give us an expected value of $3$? We learned something about the central location of the distribution from its expectation.
+
+#### Calculating an expectation
+OK, you don't have to integrate anything. But how about some summations for discrete distributions?
+
+The Bernoulli(.25) distribution has pmf:
+\[f(x) = \begin{cases} 
+      0.75 & \text{for } x =  0 \\
+      0.25 & \text{for } x =  1 
+   \end{cases}
+\]
+So 
+\begin{equation*}
+\begin{split}
+E[X] & = \sum_{x = 0}^1 x\,f(x) \\
+& = 0\times 0.75 + 1 \times 0.25\\
+& = 0.25
+\end{split}
+\end{equation*}
+
+This, of course, matches what we already know about the Bernoulli distribution: its mean is its probability parameter. We could have replaced $0.25$ with $p$ and $0.75$ with $1 - p$ and found $E[X] = p$.
+
+Now look at this distribution:
+\[f(x) = \begin{cases} 
+      0.25 & \text{for } x =  -4 \\
+      0.5 & \text{for } x =  1 \\
+      0.25 & \text{for } x =  19 \\
+   \end{cases}
+\]
+
+```{r expPractice, echo = F}
+question("What's the expected value of the above distribution?",
+    answer("-4"),
+    answer("0"),
+    answer("1"),
+    answer("4.25", correct = T),
+    answer("16"),
+    answer("19"),
+    allow_retry = T)
+```
+
+Did you do something like this?
+\begin{equation*}
+\begin{split}
+E[X] & = \sum_{x} x\,f(x) \\
+& = -4\times 0.25 + 1 \times 0.5 + 19 \times 0.25\\
+& = 4.25
+\end{split}
+\end{equation*}
+
+Note that in both cases, the expected value of the distribution is not a value the random variable itself can have. A binary variable can of course never have the value 0.25, and in the second distribution, $X$ can only take on three values, none of which is its expectation. This is an important point to remember when we start modeling, because we are often modeling expectations and not the actual observed or observable values of variables. 
+
+#### Another way to describe distributions
+
+We can learn something about the spread of a distribution from its **variance**:
+\[Var(X) = E[(X - E[X])^2] = \int_{-\infty}^{\infty} (x - E[X])^2\, f(x) dx \;, \]\
+where $E[X]$ is the expectation we've already looked at -- the mean (again, we can sum instead of integrate for discrete variables).
+
+Notice how we're doing the exact same thing we did above to calculate the variance, which is the **expectation** of a *function* of $X$. We're integrating (or summing) that function, multiplied by $f(x)$, over all the possible values that $X$ can take on. The function of $X$ that we're interested in is $(X - E[X])^2$.
+
+Think of it this way: we want to know, on average (so we integrate over everything, weighted by its relative probability), how far away a random variable might be from its mean (so we find the distance by subtracting). We square it because we don't care about which direction the distance is in: we want 3 less than the mean to be worth the same as 3 more than the mean. (In fact, if we didn't square it, we'd just get 0... can you figure out why?)
+
+Compare these distributions:
+```{r compareNorms, echo = F}
+curve(dnorm(x, 0, sqrt(.25)), xlim = c(-8, 8), main = "Normal pdfs", ylab = "density")
+curve(dnorm(x, 0, sqrt(1)), col = "red", add = T)
+curve(dnorm(x, 0, sqrt(4)), col = "blue", add = T)
+curve(dnorm(x, 0, sqrt(9)), col = "green", add = T)
+legend("topright", col = c("black", "red", "blue", "green"),
+       title = "Variance",
+       legend = c("0.25", "1", "4", "9"), lty = 1)
+```
+
+All of the above distributions have mean 0, so $Var(X) = E[(X - E[X])^2] = E[(X - 0)^2]$. Look at a value like 5. All four distributions have non-zero density at $X = 5$, so when we integrate over 5, that value will make *some* contribution to the variance. And since they all have the same mean, the value $(X - E[X])^2 = (5 - 0)^2$ is the same. However, $f(5)$ is much larger for the green line than the red line. So a large value like $(5 - 0)^2 = 25$ will contribute more to the variance for the green distribution. Small values close to 0 still contribute the most for each of the distributions, but they contribute relatively less for the green one, compared to more extreme values. The shape of the green distribution is broader. That's why its variance is much higher.
+
+#### Practice with variances
+Let's look back at the distribution above and calculate its variance. We already calculated $E[X] = 4.25$, so we can plug that into our expression. Again, we are summing over the possible values and weighting by the probabilities of those values, but this time what we are summing is $(x - 4.25)^2$.
+
+As a reminder, the pmf was 
+\[f(x) = \begin{cases} 
+      0.25 & \text{for } x =  -4 \\
+      0.5 & \text{for } x =  1 \\
+      0.25 & \text{for } x =  19 \\
+   \end{cases}
+\]
+so we can calculate the variance as follows:
+\begin{equation*}
+\begin{split}
+Var(X) & = \sum_{x} (x  - E[X])^2\,f(x) \\
+& = (-4 - 4.25)^2\times 0.25 + (1 - 4.25)^2 \times 0.5 + (19 - 4.25)^2 \times 0.25\\
+& = 76.6875
+\end{split}
+\end{equation*}
+
+Now you try to calculate the variance of the Bernoulli($0.25$) distribution, which we already calculated the mean of (so you can plug that in for $E[X]$).
+
+```{r varPractice, echo = F}
+question("What is Var($X$) if $X \\sim Bernoulli(0.25)$?",
+    answer("0.25"),
+    answer("0.75"),
+    answer("0.1875", correct = T),
+    answer("0.5"),
+    allow_retry = T)
+```
+
+Instead of going through all the math, there are usually closed-form expressions for variances of distributions in terms of their parameters, just like we found that the mean of a Bernoulli is just $p$. Let's look at in general how we would find $Var(X)$ if $X \sim Bernoulli(p)$.
+
+The Bernoulli($p$) distribution has pmf:
+\[f(x) = \begin{cases} 
+      1 - p & \text{for } x =  0 \\
+      p & \text{for } x =  1 
+   \end{cases}
+\]
+so
+\begin{equation*}
+\begin{split}
+E[(X - E[X])^2] & = \sum_{x = 0}^1 (x - E[X])^2\,f(x) \\
+& = \sum_{x = 0}^1 (x - p)^2\,p^x(1 - p)^{1 - x}\\
+& = p^2(1 - p) + (1-p)^2p \\
+& = p^2 - p^3 + p - 2p^2 + p^3 \\
+& = p(1 - p)
+\end{split}
+\end{equation*}
+
+This is one of those things you should just memorize, because we use a lot of binary variables in the population health sciences, and each one of them has variance $p(1-p)$!
+
+#### Covariance
+
+Like the name implies, covariance tells us the extent to which two variables vary together, or tend to move in the same direction. If two random variables are independent, knowing about one tells you nothing about the other, so their **covariance** is zero. Let's break down its definition:
+\[Cov(X, Y) = E[(X - E[X])(Y - E[Y])]\]
+First of all, note that if we replace $Y$ with $X$ -- so look at the covariance of $X$ with itself -- we are back to the definition of variance. The covariance just extends the same concept to another variable. When $X$ is far from its mean at the same time $Y$ is from *its* mean, then the covariance will be large. This implies that they are moving together, away from their respective means at the same time (and of course close to their respective means at the same time). If the two variables are independent, then, on average, the probability that $X$ is above its mean and $Y$ is above its mean is balanced out by the probability that $X$ is above its mean and $Y$ is *below* its mean (and vice versa), since they happen equally often if $X$ and $Y$ have no relationship.
+
+On average, when someone is heavier than the mean weight in the population, they will also be taller than the mean height. When someone is shorter, then also tend to be lighter. Since both variables tend away from the mean in the same direction, their covariance is positive. However, if we are looking at the relationship between animal size and sleep duration, we will see a different relationship. Animals like elephants and giraffes tend to be bigger than the average animal, and they only sleep a few hours a day. The animals that sleep more than average, like bats and chipmunks, are the smallest ones. This inverse relationship means that the covariance between those two variables is negative -- on average, when one is above the mean, the other is below, and vice versa.
+
+#### Properties of the mean and variance
+
+There are also some simple rules for means and variances -- of any distribution -- that you should memorize. In each case take $a$ and $b$ to be scalars; that is, a single real number, while $X$ and $Y$ are random variables:
+\[E[aX] = aE[X]\]
+\[E[X + Y] = E[X] + E[Y]\]
+\[E[aX + bY] = aE[X] + bE[Y]\]
+\[Var(aX) = a^2Var(X)\]
+\[Var(X + Y) = Var(X) + Var(Y) + 2Cov(X, Y)\]
+\[Var(aX + bY) = a^2Var(X) + b^2Var(Y) + 2abCov(X, Y)\]
+\[Var(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2\]
+
+Use this code box to explore these rules. I'll start you off with the first one. You already have seen `mean()`; you'll also want to use the functions `var()`, and `cov()`. Note that even though we have been mostly using the normal distribution for simplicity, these rules are true of any distribution, so play around! I'll use the exponential, which is another continuous distribution, but you can try any others (remember they each have their own arguments; the exponential takes `rate = `). When looking at two random variables $X$ and $Y$, you can even use two different distributions.
+
+```{r rules, exercise = TRUE, exercise.lines = 6}
+X <- rexp(n = 1000, rate = 4)
+a <- 92
+mean(a * X)
+a * mean(X)
+```
+
+Of course, we are showing these rules with sample means and variances, and not the true parameters. If you drew from a Bernoulli distribution, you probably noticed that the mean of your sample wasn't exactly $p$ and the variance not exactly $p(1 - p)$. In a large enough sample, however, the sample values should be quite close to the true parameters. We'll learn more about this in the modeling and estimation section.
+
+#### Conditional expectations
+Like probabilities, we can also have **conditional** expectations, which we can write like this: $E[X | Y = y]$. We are still curious about the average value of the random variable $X$, but now we only want to know its mean when $Y$ takes on a certain value. 
+
+Previously we dichotomized age ($A < 50$, $A \geq 50$) when we looked at its relationship with disease status. While in some situations it may be appropriate to consider all people older than 50 "old", and all those younger "young", and only compare those two large strata, in other situations we might be concerned with the average age, and not the proportion above 50. We might, for example, want to compare $E[A | D = 1]$ and $E[A | D = 0]$, the expected value of age in the diseased and non-diseased, respectively. In a sample, of course, we could just split the data into the two disease groups and calculate the sample mean within each one to estimate those quantities. 
+
+In many situations, however, we want to condition on multiple variables. For example, we might want to compare the average age among the diseased and non-diseased, but only among people who test positive for disease. In other words, we want to "hold constant" test status. This is perhaps not the most realistic example, so let's move to something new. Instead let's say we are interested in age at onset of puberty. In particular, we may want to know if birthweight is associated with the timing of onset. However, we don't want to compare boys and girls -- we know they're not directly comparable in both birthweight and age at puberty -- so we would like to condition on child sex as well. 
+
+Let $A$ = age at onset of puberty, $B$  = birthweight in grams, and $G = 1$ if a child is a girl and $0$ otherwise. See if you can translate the following difference in conditional expectations into a research question:
+$$E[A | B = b + 100, G = g] - E[A | B = b, G = g]$$
+We want to know, on average, what the difference is in age at onset of puberty associated with a 100g difference in birthweight (i.e., from $b$ to $b + 100$), holding child sex constant (at $g$). If you have interpreted parameters from regression models before, you may find this language familiar. Notice, though, that we have no model, and we haven't said anything about how we're estimating this quantity: we've just defined what we're interested in as a difference in conditional expectations. We'll get to the estimation later.
+
+#### Factor variables in R
+
+There are quite a few datasets built into R that are often used in examples in the help files or for teaching. We'll play around with one of those datasets now. To load the `iris` dataset, use the function `data(iris)`. Then use the functions you know to explore the dataframe and the variables that make it up before moving on. You can also run `?iris` to learn more about the data.
+
+```{r loadIris, exercise = TRUE, exercise.lines = 5}
+
+```
+
+You may have noticed that while four of the variables are numeric, one is not: `iris$Species`. Use the `class()` function on this variable:
+
+```{r irisClass, exercise = TRUE, exercise.lines = 1}
+
+```
+
+This is a "factor", or categorical variable. Factor variables are not as straightforward to use as numeric or logical variables, but they are a very useful data type when doing statistics, because R automatically does some of the annoying work for you.
+
+Factor variables have "levels". Although their levels are usually words, they don't act like character variables. Instead, each one of the levels is secretly an integer, starting with 1. We're going to use a tiny subset of the data called `iris_sub` to explore this further.
+
+```{r iris-prep, echo = F}
+iris_sub <- iris[c(1, 58, 34, 111, 89),]
+fruits <- as.factor(c("apple", "grape", "grape", "orange", "grape", "apple"))
+```
+Look at the output from these three lines of code. See if you can figure out what's going on.
+```{r irisInt, exercise = TRUE, exercise.lines = 3, exercise.setup = "iris-prep"}
+iris_sub$Species
+as.numeric(iris_sub$Species)
+levels(iris_sub$Species)
+```
+The `levels()` function extracts the levels from a factor variable like `Species`. The levels are printed in order, so that the first listed is 1, the second 2, and so on. We can see that the factor labels are really just hiding the integer values by using the function `as.numeric()`, which, among other things, can turn a factor variable into a numeric variable. Note that this only works because the variable is of that type -- it wouldn't work on a character vector, as you can see below.
+```{r irisChar, exercise = TRUE, exercise.lines = 1}
+as.numeric(c("setosa", "versicolor", "setosa", "virginica", "versicolor"))
+```
+
+However, we can convert a character vector into a factor. R will generally do this automatically when you read in data, (unless you use the argument `stringsAsFactors = FALSE`, but you'll get a chance to practice reading in data once class starts), which is usually helpful, unless you have a variable that you want to remain in character format -- say, the names of all the people in the class.
+
+```{r charFact, exercise = TRUE, exercise.lines = 2, exercise.setup = "iris-prep"}
+fruits <- as.factor(c("apple", "grape", "grape", "orange", "grape", "apple"))
+fruits
+```
+
+Notice that when you create a factor from a character vector as above, the levels are automatically created in alphabetical order. The first level (in this case, "apple") will be the reference level for any comparisons made with the other levels. Often, however, we want to reorder the levels, and in particular choose a new reference level, or change the names of the labels for the levels.
+
+```{r fact2, exercise = TRUE, exercise.lines = 2, exercise.setup = "iris-prep"}
+fruits2 <- factor(fruits, levels = c("orange", "grape", "apple")) #reorder
+fruits2
+```
+
+```{r fact3, exercise = TRUE, exercise.lines = 2, exercise.setup = "iris-prep"}
+fruits3 <- relevel(fruits, ref = "orange") # just choose new reference
+fruits3
+```
+
+```{r fact4, exercise = TRUE, exercise.lines = 2, exercise.setup = "iris-prep"}
+fruits4 <- factor(fruits, labels = c("APPLE", "GRAPE", "ORANGE")) # relabel
+fruits4
+```
+
+Notice that in each case, the observed values retain the same values (though perhaps not the integers behind them) and are in the same order, it's the levels that have changed.
+
+Returning to the `iris_sub` dataset, create another variable `new_species` in the same dataset which is also a factor variable, but which has levels "VIRGINICA", "VERSICOLOR", and "SETOSA", in that order. Print out that variable as well as the dataset to make sure that you didn't change the observations.
+```{r newSpec, exercise = TRUE, exercise.lines = 3,exercise.setup = "iris-prep"}
+
+```
+
+```{r newSpec-hint-1, error = TRUE}
+iris_sub$new_species <- # code here
+```
+
+```{r newSpec-hint-2, error = TRUE}
+iris_sub$new_species <- factor(iris_sub$Species, ...)
+```
+
+```{r newSpec-hint-3}
+iris_sub$new_species <- factor(iris_sub$Species, levels = c("virginica", "versicolor", "setosa"), labels = c("VIRGINICA", "VERSICOLOR", "SETOSA"))
+iris_sub$new_species
+iris_sub
+```
+
+Now let's practice estimating some conditional expectations in the entire `iris` dataset. Previously we estimated conditional probabilities by creating new datasets using the `subset()` function. Let's review that here. Calculate the mean petal length among the versicolor species.
+```{r versSub, exercise = TRUE, exercise.lines = 2}
+
+```
+```{r versSub-solution}
+versicolor <- subset(iris, subset = Species == "setosa")
+mean(versicolor$Petal.Length)
+```
+
+There are a number of ways to manipulate and summarize data in R. Some people use the functions in base R, others prefer packages like `dplyr` and `data.table`. Becoming fluent in one or more of these strategies will help you immensely with data management and calculating descriptive statistics. We're just using base R functions in this tutorial, but you can learn more about `dplyr` [here](https://dplyr.tidyverse.org) and `data.table` [here](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html).
+
+To quickly calculate the conditional means of petal length for each species, we can use the `aggregate()` function. The first argument is the variable we are trying to summarize using a function whose name we supply to the `FUN = ` argument. The `by = ` argument must be a list (a type of object we haven't covered yet, but you can easily create one with the function `list()`) of the factors you want to group by.
+```{r aggIris, exercise = TRUE, exercise.lines = 1}
+aggregate(iris$Petal.Length, by = list(iris$Species), FUN = mean)
+```
+
+Use the same function to find the standard deviation of the petal width within each species.
+
+```{r aggSD, exercise = TRUE, exercise.lines = 1}
+
+```
+
+```{r aggSD-solution}
+aggregate(iris$Petal.Width, by = list(iris$Species), FUN = sd)
+```
+
+Now let's try to put all of these ideas together. Another dataset in R is called `mtcars`. In this dataset, according to the help file, the `am` variable contains information on type of transmission (0 = automatic, 1 = manual) and `vs` on the type of engine (0 = V-shaped, 1 = straight). Create two new variables, `transmission` and `engine`, with this same data in the form of factors with appropriate labels. Make "manual" and "straight" the reference levels. Then calculate the conditional means of the `mpg` variable for each *combination* of transmission and engine type using the `aggregate()` function.
+
+```{r aggFin, exercise = TRUE, exercise.lines = 5}
+
+```
+
+```{r aggFin-hint-1, error = TRUE}
+mtcars$transmission <- factor(...)
+```
+
+```{r aggFin-hint-2}
+mtcars$transmission <- factor(mtcars$am, levels = c("1", "0"), labels = c("manual", "automatic"))
+```
+
+```{r aggFin-hint-3, error = TRUE}
+aggregate(mtcars$mpg, by = list(..., ...), FUN = mean)
+```
+
+```{r aggFin-hint-4}
+mtcars$transmission <- factor(mtcars$am, levels = c("1", "0"), labels = c("manual", "automatic"))
+mtcars$engine <- factor(mtcars$vs, levels = c("1", "0"), labels = c("straight", "V-shaped"))
+aggregate(mtcars$mpg, by = list(mtcars$transmission, mtcars$engine), FUN = mean)
+```
+
+#### More resources
+
+Start [here](https://www.khanacademy.org/math/statistics-probability/random-variables-stats-library/random-variables-discrete/v/expected-value-of-a-discrete-random-variable) for information about expectations, [here](https://www.khanacademy.org/math/statistics-probability/random-variables-stats-library/random-variables-discrete/v/variance-and-standard-deviation-of-a-discrete-random-variable) for variance. The examples [here](https://www.khanacademy.org/math/statistics-probability/random-variables-stats-library/binomial-mean-standard-dev-formulas/v/mean-and-variance-of-bernoulli-distribution-example) for the Bernoulli and binomial distributions are very helpful.

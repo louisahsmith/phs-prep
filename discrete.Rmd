@@ -1,0 +1,159 @@
+## Discrete random variables
+
+So far we've looked at the probability of a given event or combination of events that result from an experiment. Now we'll learn how to characterize the probabilities of *all* the possible outcomes of an experiment: its **probability distribution**.
+
+Let's first talk about those possible outcomes. We can assign them numeric values. For example, when we flip a coin once we have two possible outcomes: 'heads' (which we'll assign the value 1) and 'tails' (0). Because the value (1 or 0) that we observe comes from some random process (a coin flip), we call it a **random variable**. 
+
+A random variable is the *numerical outcome of some random event*. That may sound a bit obtuse, but we'll see plenty of examples here and throughout the course. We generally use capital letters to denote random variables and lower case letters to denote their **realizations**, or the values that they take on. 
+
+Consider the following characterization of the coin flip:
+
+\[
+P(X = x) = \begin{cases} 
+      0.5 & \text{for } x =  0 \\
+      0.5 & \text{for } x =  1 \\
+   \end{cases}
+\]
+
+The random variable that represents the outcome of the coin flip experiment is $X$. It can take on two possible values: $x = 0$ ('tails') and $x = 1$ ('heads'). Each of them has equal probability of occurring (if it were an unfair coin, we could assign probabilities other than 0.5). 
+
+#### Probability mass functions
+
+The function above is called a **probability mass function** (pmf). For a **discrete** random variable $X$, its pmf, often denoted $f(x)$, is the function that describes the probability that $X$ takes on each of its possible values:
+$$f(x) = P(X = x)$$
+
+The fact that the random variable has a **discrete** probability distribution means that it has a countable number of possible values (we'll contrast this later with **continuous** distributions.)
+
+For some distributions we may be able to enumerate those possible values. For example, for an experiment with possible outcomes ${0, 1, 2}$, we may have that:
+\[f(x) = \begin{cases} 
+      0.1 & \text{for } x =  0 \\
+      0.5 & \text{for } x =  1 \\
+      0.4 & \text{for } x =  2 \\
+   \end{cases}
+\]
+(We'll leave implicit the fact that $f(x) = 0$ for all other values of $x$.) This describes a discrete probability distribution:
+```{r pmf1, echo = F, fig.height=3.15, fig.width = 4.5, fig.align="center"}
+y <- c(0, 1, 2)
+prob <- c(.1, .5, .4)
+axis_vals <- c(0, 2, 2)
+pmf_func(y, prob)
+```
+
+In other cases, we may have a single expression that produces those values. For example, the **Poisson distribution** can take on any integer value from 0 to infinity. Its pmf, which depends on the rate parameter $\lambda$ (a constant value, like 1.5 or 50, that helps define a distribution) is:
+
+$$f(x) = \frac{\lambda^x e^{-\lambda}}{x!}$$
+for $x = 0, 1, 2, \ldots$. The pmf for the Poisson(2) distribution (we generally put the parameters of a distribution in parentheses following its name, so Poisson(2) means that its rate parameter $\lambda = 2$) looks like this:
+
+```{r pmf2, echo = F, fig.height=3.15, fig.width = 4.5, fig.align="center"}
+y <- 0:15
+prob <- dpois(y, 2)
+axis_vals <- c(0, 2, 2)
+pmf_func(y, prob)
+```
+though of course the x-axis could continue to infinity, if there were space on your computer screen. It's pretty pointless to extend it further, though, because the probability $P(X = x)$ of any given value of $x$ greater than those shown is very close to 0.
+
+Graphing these pmfs shows us that they have some similarities. In fact, all pmfs (remember, pmfs are for **discrete** distributions only), follow certain rules:
+
+- The probabilities over all the possible values must sum to 1
+
+- None of the probabilities can be < 0 or > 1
+
+#### Probability distributions in R
+
+Now let's learn some new R functions in order to help us explore discrete probability distributions and their pmfs. 
+
+There is a family of functions for each of many distributions, including the **binomial** (the coin flip experiment was a special case of this called the **Bernoulli**) and the **Poisson** (the Poisson is often used for counts, such as cases of disease). 
+
+Each of these distributions has a 'shortcut' or abbreviation in R. For example, binomial is `binom` and Poisson is `pois`. Some other shortcuts for discrete distributions include `geom` for the geometric distribution and `nbinom` for the negative binomial (you don't have to know these).
+
+To get the pmf for a given distribution at a given $x$ value, you simply attach the prefix `d` to the shortcut. The function may require that you specify other parameters of the distribution, like we did with $\lambda = 2$ in the Poisson above. The parameter associated with the Bernoulli (coin flip) distribution is sometimes denoted $p$, other times $\pi$, but in any case it is equal to $P(X = 1)$. In R, those arguments are `lambda = ` and `prob = `, respectively.
+
+To demonstrate this, let's recreate the pmf from the coin flip experiment. We need the two possible $x$ values, 0 and 1:
+```{r dbinom-prep, echo = F}
+x <- c(0, 1)
+```
+```{r dbinom1, exercise = TRUE, exercise.lines = 1, exercise.setup = "dbinom-prep"}
+x <- c(0, 1)
+```
+as well as the `dbinom` command (which also takes the `size =` argument: `size = 1` means we're working with 1 coin, which is the Bernoulli distribution):
+```{r dbinom2, exercise = TRUE, exercise.lines = 2, exercise.setup = "dbinom-prep"}
+fx <- dbinom(x, size = 1, prob = 0.5)
+cbind(x, fx) # concatenates vectors in columns
+```
+That looks like the function we saw above! This is the Bernoulli(0.5) distribution.
+
+Now look at the Poisson(2) distribution (again, $\lambda = 2$). We'll look just at values through 15.
+
+First create the `x` object with the possible values of the Poisson distribution (again, just 0 through 15). Then create the `fx` object using the appropriate function (you will need the argument `lambda = 2`). Print out the values and see whether they match the graph from earlier (just eyeball them).
+```{r pois1, exercise = TRUE, exercise.lines = 3}
+
+
+```
+
+```{r pois1-solution}
+x <- 0:15
+fx <- dpois(x, lambda = 2)
+cbind(x, fx)
+```
+
+Now look at some graphs of pmfs as you change the distributions and the parameters. You will use the `pmf_func()` function (which was created for this tutorial and is not included with R, so you won't be able to use it outside the tutorial), which takes arguments `x =` and `fx =`, like you created earlier. I've started you off with one pmf; play around with the first two lines of the code to create new graphs. (You may want to look up the distributions on Wikipedia to get an idea of what values they can take on and what the parameters mean; the pages have very helpful sidebars. You can also find the help files for each distribution [here](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Distributions.html), which will help you figure out the shortcuts and know which extra arguments (like `prob` or `lambda`) the functions require.)
+
+
+```{r pmf_fig, exercise = TRUE, exercise.eval = T, fig.height=2.75, fig.width = 4.5, fig.align="center", exercise.lines = 3}
+x <- 0:10
+fx <- dgeom(x, prob = .3)
+pmf_func(x, fx)
+```
+
+
+#### *Practice*
+
+```{r prac4a, echo = F}
+question("Which of these are valid pmfs?",
+    answer('$$f(x) = \\begin{cases}  0.1 & \\text{for } x =  29 \\\\ 0.5 & \\text{for } x =  35 \\\\ 0.4 & \\text{for } x =  62 \\\\ \\end{cases} $$', correct = TRUE),
+    answer('$$f(x) = \\begin{cases}  0.1 & \\text{for } x =  0 \\\\ 0.5 & \\text{for } x =  1 \\\\ \\end{cases} $$'),
+    answer('$$f(x) = \\begin{cases}  0.12 & \\text{for } x =  0 \\\\ 0.88 & \\text{for } x =  1 \\\\ \\end{cases} $$', correct = TRUE),
+    answer('$$f(x) = \\begin{cases}  0 & \\text{for } x =  0 \\\\ 0.5 & \\text{for } x =  1 \\\\ 0.5 & \\text{for } x =  2 \\\\ \\end{cases} $$', correct = TRUE),
+    answer('$$f(x) = \\begin{cases}  - 0.5 & \\text{for } x =  0 \\\\ 1.5 & \\text{for } x =  1 \\\\ \\end{cases} $$'),
+    allow_retry = T
+  )
+```
+
+We saw earlier that the pmf for the Poisson distribution is
+$$f(x) = \frac{\lambda^x e^{-\lambda}}{x!}$$
+**Use that expression to calculate $f(3)$ (again with $\lambda = 2$) in R. Does this match up with what you get when you use R to calculate the value with the appropriate function? (Hint: it should also match up with the graph and table above.) Try with some other values of $x$ and $\lambda$.**
+
+```{r prac4b, exercise = TRUE, exercise.lines = 4}
+
+```
+
+```{r prac4b-solution}
+lambda <- 2
+x <- 3
+lambda ^ x * exp(-lambda) / factorial(x)
+dpois(x, lambda)
+```
+
+Instead of writing out the Bernoulli pmf as a piecewise function
+\[
+f(x)= \begin{cases} 
+      1 - p & \text{for } x =  0 \\
+      p & \text{for } x =  1 \\
+   \end{cases}
+\]
+where $p$ is the probability parameter (0.5 for a fair coin), we can condense it into a simpler expression, much like that for the Poisson pmf. That function is of the form $f(x) = a^bc^d$, where $a,b,c,d$ are functions of $x$ and $p$. First take some time to think about what could replace $a,b,c,d$ in order to produce the same values as the piecewise function, then answer the question below.
+
+```{r prac4c, echo = F}
+question("Which of these is the Bernoulli pmf?",
+    answer('$f(x) = p^{1 - x}(1 - p)^x$'),
+    answer('$f(x) = x^p(1 - x)^{1 - p}$'),
+    answer('$f(x) = x^{1 - p}(1 - x)^p$'),
+    answer('$f(x) = p^x(1 − p)^{1−x}$', correct = TRUE),
+    allow_retry = T
+  )
+```
+
+#### More resources
+For more info about random variables, watch [this](https://www.khanacademy.org/math/statistics-probability/random-variables-stats-library/random-variables-discrete/v/random-variables); the several videos that follow go into more depth about discrete distributions.
+
+

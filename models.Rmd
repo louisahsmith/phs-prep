@@ -1,0 +1,195 @@
+## Models and estimation
+
+#### Estimation of population parameters
+
+When we have a quantitative research question in the population health sciences, we usually are interested estimating in population **parameters**, or values that define something about a population. Maybe this is $\mu$, the mean blood pressure in a population, or $\boldsymbol \beta$, a vector of logistic regression coefficients for risk factors for esophageal cancer. We'll use $\theta$ in this section to represent the parameter or vector of parameters that we are interested in estimating.
+
+These parameters are values that are true for a given population -- maybe the probability of disease, or an exposure-disease risk ratio. Since we don't have access to the entire population, we rely on a sample to **estimate** these parameters. In this tutorial, we'll assume throughout that we have a *random* sample. We'll relax that assumption later in the course.
+
+We express the fact that the actual values we get are estimates by putting "hats" on the same notation we used for the parameters, such as $\hat{\theta}$. You can read this "theta-hat".
+
+Sometimes these parameters describe a model. A model is essentially a structure that we assume represents the distribution of the data we have collected. The key word here is *assume* -- modeling generally involves making choices about this structure in order to best approximate reality, while knowing that we will never be able to mimic it perfectly. While assumptions may be inevitable, it is important to be able to recognize and acknowledge those that we make -- and those that others make -- and, when appropriate, evaluate the sensitivity of these assumptions to other modeling choices we could have made instead.
+
+Other times we can avoid making particular types of assumptions and estimate parameters **non-parametrically**. For example, if we want to estimate the mean blood pressure in a population, we don't need to say anything about the distribution of blood pressure -- it doesn't have to be normal, for example -- in order to calculate a sample mean.
+
+The sample mean is one example of an **estimator**. This is a function of the data: a tool or algorithm that takes in observations and produces an estimate for a given parameter. The sample mean $\frac{1}{n} \sum_{i = 1}^n X_i$ is an estimator of the population mean. (The sample mean gets the special notation $\bar{X}$, read "x-bar".) The sample variance $\frac{1}{n - 1} \sum_{i = 1}^n (X_i - \bar{X})^2$ is an estimator of the population variance. The ordinary least squares estimator is used to estimate regression coefficients for linear regressions.
+
+#### Unbiasedness
+
+Note that the sample variance as expressed above has in the denominator $n - 1$. This may seem weird, and indeed $\frac{1}{n} \sum_{i = 1}^n (X_i - \bar{X})^2$ is another estimator of the population variance. In many cases there are multiple plausible estimators for the same quantity. In fact, you could choose anything as an estimator -- say, take the first observation's value $X_1$ as an estimator of the population mean $E[X]$. Or just take the fixed constant 0.5 as an estimator of the population risk. Clearly these are really bad ideas!
+
+We choose estimators based on certain qualities. One desirable quality is **unbiasedness**. For an estimator to be unbiased, it must on average give us the "right answer". Formally, we can express this as
+$$E[\hat{\theta}] = \theta$$
+This may seem weird. Previously we've been taking expectations of random variables. Well, $\hat{\theta}$ *is* a random variable. Any function of random variables is itself a random variable. Let's use some data to compare the two estimators of the variance and see how each random variable behaves.
+
+For simplicity, we'll assume that we are sampling a random variable $X$ that is distributed Normal(0,1). That distributional assumption is not necessary to use these estimators, but we want to start with something we *know* the right answer to. That is, we know that the true variance of $X$ is 1. We'll call that parameter of interest $\sigma^2$. We'll compare these two estimators of $\sigma^2$:
+$$\hat{\sigma}_A^2 = \frac{1}{n - 1} \sum_{i = 1}^n (X_i - \bar{X})^2$$
+$$\hat{\sigma}_B^2 = \frac{1}{n} \sum_{i = 1}^n (X_i - \bar{X})^2$$
+We have no idea what the distributions of $\hat{\sigma}_A^2$ and $\hat{\sigma}_B^2$ are -- although we could figure it out mathematically, it's a lot easier to find via simulation. 
+
+A simulation allows us to repeat experiments over and over. Each of the dice-rolling and ball-drawing examples we looked at earlier was examined via simulation. In the real world, we could draw one sample of $X$ (let's say $n = 20$) and estimate both $\hat{\sigma}_A^2$ and $\hat{\sigma}_B^2$ from that single sample:
+
+```{r unbias-prep, echo = F}
+set.seed(6789)
+n <- 20
+X <- rnorm(20) # draw 20 values from standard normal
+A <- sum((X - mean(X))^2) / (n - 1)
+B <- sum((X - mean(X))^2) / n
+set.seed(123) # set seed for reproducible results
+res <- matrix(NA, nrow = 1000, ncol = 2) # empty matrix for results
+for (j in 1:1000){
+  X <- rnorm(20) # sample from standard normal
+  A <- sum((X - mean(X))^2) / (n - 1) # use estimator A
+  B <- sum((X - mean(X))^2) / n # use estimator B
+  res[j, ] <- c(A, B) # store in next row of dataset
+}
+```
+```{r a, exercise = TRUE, exercise.lines = 7, exercise.setup = "unbias-prep"}
+set.seed(6789) # set seed for reproducible results
+n <- 20 # sample size
+X <- rnorm(20) # draw 20 values from standard normal
+A <- sum((X - mean(X))^2) / (n - 1) # estimator A
+B <- sum((X - mean(X))^2) / n # estimator B
+A
+B
+```
+So we have estimates of $\sigma^2$: $\hat{\sigma}_A^2 = 1.280$ and $\hat{\sigma}_B^2 = 1.216$. But since we only have one sample we have no way to compare the two estimators. Which one is closer to the truth? Well, we know that the true $\sigma^2 = 1$, so $\hat{\sigma}_B^2$ looks better, but that could just be a fluke, since the values of $X$ are random. Besides, we don't know the truth in real life. What we need to do is find the expectation of each estimator by simulating its distribution -- sampling over and over -- and taking the mean.
+
+One way to repeat something a number of times in R is through the use of a for-loop. Here's a simple for-loop. The first line chooses in indexing variable -- here, `i` -- and tells R what values to iterate through. On the first iteration, `i = 1`, the second `i = 2`, and so on. In between the curly brackets, the code is evaluated for each value of `i`. 
+
+```{r for1, exercise = TRUE, exercise.lines = 4}
+for (i in 1:5){
+  z <- i + 2
+  print(z)
+}
+```
+
+Try it yourself, based on the code above. Iterate through the values 5, 10, and 15 with the variable `q`. Print out the values of `q` divided by 5.
+
+```{r for2, exercise = TRUE, exercise.lines = 5}
+
+```
+
+```{r for2-solution}
+for(q in c(5, 10, 15)){
+  print(q/5)
+}
+```
+
+There are many possible solutions and only one is shown here. You may have noticed that in a for-loop a line of code that just has a variable name won't print out unless you explicitly use the `print()` function.
+
+In our simulation, however, we don't want to just print out the values of $\hat{\sigma}_A^2$ and $\hat{\sigma}_B^2$; we want to store them somewhere. We'll do that by creating an empty matrix (filling it with `NA` values, which are R's way of dealing with missing data). Since we are going to iterate 1000 times and we have 2 values we want to save, the dimensions of the matrix will be 1000 x 2.
+
+```{r sim1, exercise = TRUE, exercise.lines = 8}
+set.seed(123) # set seed for reproducible results
+res <- matrix(NA, nrow = 1000, ncol = 2) # empty matrix for results
+for (j in 1:1000){
+  X <- rnorm(20) # sample from standard normal
+  A <- sum((X - mean(X))^2) / (n - 1) # use estimator A
+  B <- sum((X - mean(X))^2) / n # use estimator B
+  res[j, ] <- c(A, B) # store in next row of dataset
+}
+```
+The last line of the loop takes the values of the estimators and replaces the `j`th row of the results matrix with them (remember that leaving the value after the comma blank in the square matrix means you're referencing the entire row). So after one iteration, only the first row will hold values, and the rest will still be missing; after the second iteration both of the first two rows will hold values, etc.
+
+Use some of the functions you know to explore the `res` object below. One that may be helpful is `dim()`, which tells you the dimensions of an object.
+```{r sim2, exercise = TRUE, exercise.lines = 4, exercise.setup = "unbias-prep"}
+
+```
+
+If you tried to use `mean()`on the res object, you may have noticed that it combined the columns of the matrix and took the overall mean. That's not what we want -- we want the mean of each column separately. What we are trying to estimate is $E[\hat{\sigma}^2_A]$ from the mean of the first column and $E[\hat{\sigma}^2_B]$ from the mean of the second column. 
+
+One solution is to extract the columns separately and take the mean of each one with `mean(res[,1])` and `mean(res[,2])`. However, an easier solution is `colMeans(res)` (there's also `rowMeans()`), which will do both at once.
+
+```{r sim3, exercise = TRUE, exercise.lines = 1, exercise.setup = "unbias-prep"}
+colMeans(res)
+```
+
+Remember that to be unbiased, we want $E[\hat{\sigma}^2] = \sigma^2$. We know that $\sigma^2 = 1$ because we drew $X$ from a distribution with variance 1 (the standard normal). We can see from this simulation that $\hat{\sigma}^2_A$ is an unbiased estimator, while $\hat{\sigma}^2_B$ underestimates the true value of $\sigma^2$. (Note that we'll never get exactly 1 because the simulation has its own random error, but we got close enough to be satisfied.)
+
+This conflicts with what we thought at first: remember that $\hat{\sigma}^2_B$ from our first sample was closer to 1! We don't know anything about the expected value of an estimator just from one sample.
+
+#### Consistency
+
+Another desirable characteristic for an estimator is **consistency**. This is less mathematically obvious, so we won't go into much detail, but in words it basically means that as your sample size gets bigger, the estimate you get from that sample gets closer and closer to the true value of the parameter.
+
+The difference between unbiasedness and consistency may seem subtle. But note that unbiasedness doesn't depend on sample size (there's no $n$ in the definition), whereas consistency does. The estimator that just uses data from the first observation in the dataset $X_1$ is unbiased: on average, as you sample from the population over and over again, the first person's value will be the population value (assuming your observations are in random order). However, no matter how big your sample gets, you're still only using data from one person, so your estimate from a single sample is never going to be any closer to the true parameter than if you had only sampled one person.
+
+#### Efficiency
+
+Consistency is a pretty straightforward requirement for an estimator. But we may be OK with a little bit of bias if the estimator is particularly **efficient**, or has low variance. Unlike consistency and unbiasedness, efficiency (or precision) is not an absolute concept -- it's not that an estimator is or is not efficient, only that it is or is not relative to another estimator. If we compare two estimators, $\hat{\theta}$ and $\tilde{\theta}$, the relative efficiency of $\hat{\theta}$ means that $Var(\hat{\theta}) < Var(\tilde{\theta})$, or that on average, you'll get an estimate that's closer to the true value of the parameter when you use $\hat{\theta}$.
+
+Let's return to our example where we take 20 samples from a standard normal distribution. Instead of estimating $\sigma^2$, now let's estimate the mean, $\mu$. Again, we chose this distribution because we know the right answer: $\mu = 0$. But now when we compare two estimators we care about whether the estimates are similar to each other -- whether they have low variability.
+
+The two estimators of $\mu$ we'll compare are the sample mean and the sample median. Since the normal distribution is symmetric, its mean is equal to its median, so they are both estimators of the same quantity. We want to know which one has lower variance.
+
+We can reuse most of the code from last time. Fill in the missing lines to reflect the two estimators we are now comparing, where $\hat{\mu}_A$ is the sample mean and $\hat{\mu}_B$ the sample median.
+
+```{r medSim, exercise = TRUE, exercise.lines = 8, error = TRUE}
+set.seed(123) # set seed for reproducible results
+res <- matrix(NA, nrow = 1000, ncol = 2) # empty matrix for results
+for (j in 1:1000){
+  X <- rnorm(20) # sample from standard normal
+  A <-  
+  B <- 
+  res[j, ] <- c(A, B) # store in next row of dataset
+}
+```
+```{r med-prep, echo = F}
+set.seed(123) # set seed for reproducible results
+res <- matrix(NA, nrow = 1000, ncol = 2) # empty matrix for results
+for (j in 1:1000){
+  X <- rnorm(20) # sample from standard normal
+  A <- mean(X)
+  B <- median(X)
+  res[j, ] <- c(A, B) # store in next row of dataset
+}
+```
+
+First check to confirm that both are unbiased estimators of $\mu$, which in this case is 0:
+
+```{r medBias, exercise = TRUE, exercise.lines = 1, execise.setup = "med-prep"}
+
+```
+What do you think?
+
+Before we compare the efficiency of these estimators, let's look at their **sampling distributions** as a whole. Here are histograms made from each of the estimates. (The code is essentially `hist[,1]` and `hist[,2]`, but a bit more complicated than that so it's not shown. Feel free to check out the help file for `hist()` and play around.)
+```{r index-5, execise.setup = "med-prep", echo = F}
+par(mfrow = c(1, 2))
+hist(res[,1], xlab = expression(hat(mu)[A]), main = expression("Distribution of "*hat(mu)[A]), breaks = seq(-1, 1, length.out = 20))
+hist(res[,2], xlab = expression(hat(mu)[B]), main = expression("Distribution of "*hat(mu)[B]), breaks = seq(-1, 1, length.out = 20))
+par(mfrow = c(1, 1))
+```
+
+This is the empirical equivalent to the probability density function. Recall that $\hat{\mu}_A$ and $\hat{\mu}_B$ are just continuous random variables. We haven't said anything about *which* distribution each has, but we can describe its characteristics and calculate values like its mean and variance. If it helps to convince you that these sampling distributions are just like the probability distributions we've seen, we can turn those histograms into "density plots", which basically just smooth over the histogram bars.
+```{r index-6, execise.setup = "med-prep", echo = F}
+par(mfrow = c(1, 2))
+plot(density(res[,1]), xlab = expression(hat(mu)[A]), main = expression("Distribution of "*hat(mu)[A]), xlim = c(-1, 1), ylim = c(0, 1.85))
+plot(density(res[,2]), xlab = expression(hat(mu)[B]), main = expression("Distribution of "*hat(mu)[B]), xlim = c(-1, 1), ylim = c(0, 1.85))
+par(mfrow = c(1, 1))
+```
+
+The distribution that has smaller variance tells us which of these estimators is more efficient.
+```{r efficient, echo = F}
+question("Which is the more efficient estimator of $\\mu$, $\\hat{\\mu}_A$ or $\\hat{\\mu}_B$?",
+    answer("$\\hat{\\mu}_A$, the sample mean", correct = TRUE),
+    answer("$\\hat{\\mu}_B$, the sample median"),
+    allow_retry = T
+  )
+```
+We can confirm that by calculating the variance of each of the estimates. Unfortunately there's no direct equivalent to `colMeans()` for the variance in base R. Use the `var()` function on each of the columns separately to compare.
+
+```{r effCalc, exercise = TRUE, exercise.lines = 2, execise.setup = "med-prep"}
+
+```
+
+```{r effCalc-solution}
+var(res[,1])
+var(res[,2])
+```
+
+Again, we would never have known this from just one sample. With our one sample, we may happen to get values of $X$ that give us estimates near the center, or way out in the tails, and we will have no idea which. We want an efficient estimator so the tails are more compact: if we do happen to get a "bad" sample way out there, it won't be quite as far out!
+
+#### More resources
+
+Learn more about sampling distributions and estimators [here](https://www.khanacademy.org/math/ap-statistics/sampling-distribution-a).

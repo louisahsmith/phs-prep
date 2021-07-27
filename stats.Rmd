@@ -1,0 +1,209 @@
+## Statistical inference
+
+#### Standard errors
+
+When we do "statistics", we are using data from a sample to tell us something about the population. In the language of the last section, we are using observations to estimate parameters. OK, great. We use our estimator -- and hopefully we chose a good one -- and calculate an estimate of the prevalence of depression, or the odds ratio for smoking and lung cancer is, or whatever it is we had a question about. But we only used a single sample to get that estimate! We also want to know, in general, how certain we are that that value is a good measure of what's going on in the population. If we had chosen a completely different random sample, how different would we expect our estimate to be?
+
+We saw in the last section that our estimates have a distribution. But we only got to see the sampling distribution when we ran simulations. What can we learn about that distribution from only a single sample?
+
+Well, we can assess the variability of our estimates with **standard errors**. Smaller standard errors mean that we can be more certain that an estimate is close to the true population value of whatever parameter it is we're trying to estimate. A standard error is simply the standard deviation of the sampling distribution. We calculated the variance of the sampling distribution of two estimators of $\mu$ in the last section -- we could simply take their square roots to get the standard deviation of those distributions, or the standard errors.
+
+Before we see how to estimate these from one sample, take a second to think about what leads to small standard errors. We already compared two estimators in the same samples. What about when we compare the same estimator in different samples?
+
+```{r ses, echo = F}
+question("Which of these lead to smaller standard errors?",
+         answer("A more efficient estimator", correct = T),
+         answer("A less efficient estimator"),
+         answer("A larger sample size", correct = T),
+         answer("A smaller sample size"),
+         answer("A random variable with more variability"),
+         answer("A random variable with less variability", correct = T),
+         allow_retry = T
+         )
+```
+Since we've already compared estimators, let's just stick with one: the sample mean. Intuitively, if we're trying to estimate the mean height in a population and we sample 1000 people, we'll get a more precise estimate than if we only sample 100 people. That is, we're more likely to be closer to the truth with a larger sample size. If we're trying to estimate mean height among adults and mean height among 2-year-olds, we'll get a more precise estimate for the toddlers. That's because the random variable of interest, height, has a smaller variance in 2-year-olds (they tend to be more similar in size). Our single sample is less likely to have extreme values, so the sample mean is more likely to be close to the population mean.
+
+Before we move on, let's practice designing simulations to demonstrate both of these concepts. First, let's compare the two sample sizes, 100 and 1000. A number of the lines in the following code are incomplete, but the structure is almost identical to the previous for loops we ran. Now instead of comparing two estimators, we are using the same estimator in two samples. Fill in the missing pieces.
+
+```{r nComp, exercise = TRUE, exercise.lines = 13, error = TRUE}
+# set seed for reproducible results
+n1 <-  # first sample size
+n2 <-  # second sample size to compare
+res <-  # empty matrix for results
+for (j in 1:1000){
+  X1 <- # first sample from standard normal
+  X2 <- # second sample from standard normal
+  mean1 <- # estimate from first sample
+  mean2 <- # estimate from second sample
+  res[j, ] <- c(mean1, mean2) # store in next row of dataset
+}
+sd(res[,1])
+sd(res[,2]) # standard error = sd of sampling distribution
+```
+```{r nComp-solution}
+set.seed(6789) # set seed for reproducible results
+n1 <- 100 # first sample size
+n2 <- 1000 # second sample size to compare
+res <- matrix(NA, ncol = 2, nrow = 1000) # empty matrix for results
+for (j in 1:1000){
+  X1 <- rnorm(n1) # first sample from standard normal
+  X2 <- rnorm(n2) # second sample from standard normal
+  mean1 <- mean(X1) # estimate from first sample
+  mean2 <- mean(X2) # estimate from second sample
+  res[j, ] <- c(mean1, mean2) # store in next row of dataset
+}
+sd(res[,1])
+sd(res[,2]) # standard error = sd of sampling distribution
+```
+What are your conclusions? Hopefully you found that a larger sample size leads to a smaller standard error! If you want, use the `hist()` function to make a picture of the sampling distribution so you can confirm that the one with the larger sample size is tighter.
+
+Now let's try estimating the means of two different random variables, each with a different variance. Let's say the first is again standard normal, but the second is $Normal(0, 2^2)$ (remember that the argument for `rnorm()` is `sd = `, which is why I wrote the parameter like that). This time you're on your own (but feel free to copy and paste code from earlier!). You can use whatever sample size you'd like.
+
+```{r varComp, exercise = TRUE, exercise.lines = 13}
+
+```
+```{r varComp-solution}
+set.seed(456) # set seed for reproducible results
+res <- matrix(NA, ncol = 2, nrow = 1000) # empty matrix for results
+for (j in 1:1000){
+  X1 <- rnorm(100) # first sample from standard normal
+  X2 <- rnorm(100, sd = 2) # second sample from normal(0, 4)
+  mean1 <- mean(X1) # estimate from first sample
+  mean2 <- mean(X2) # estimate from second sample
+  res[j, ] <- c(mean1, mean2) # store in next row of dataset
+}
+sd(res[,1])
+sd(res[,2]) # standard error = sd of sampling distribution
+```
+What are your conclusions now? The standard errors clearly depend on the variability of the random variable that we're sampling.
+
+#### The central limit theorem
+
+These two ideas come together in the central limit theorem, which provides a way to approximate sampling distributions from just a single, independent sample. We won't go into the mathematics behind it, but essentially it tells us that for statistics that are based on sums of independent random variables (like the sample mean), their sampling distributions are asymptotically normal with a variance that depends on the sample size and the variance of the random variable being summed.
+
+For the sample mean $\bar{X}$, this means that as the sample size grows to infinity, estimates over repeated samples will tend to be normally distributed with a mean that's the expectation of $X$ and variance that's the variance of $X$ divided by the sample size.
+
+$$ \bar{X} \stackrel{n\rightarrow \infty}{\sim} Normal( E[X], \frac{Var(X)}{n})$$
+Of course, we never have sample sizes even close to infinity, so we generally just say "in large enough samples", the distribution is "approximately" normal. Since the standard error is the square root of the variance of the sampling distribution, the standard error of the sample mean is simply $\sqrt{Var(X)}/\sqrt{n}$. Since we often refer to the variance of a random variable as $\sigma^2$, we often denote this as $\frac{\sigma}{\sqrt{n}}$.
+
+```{r TF1, echo = F}
+question("Increasing $n$ would make the distribution of $X$ narrower.",
+         answer("True", message = "The distribution of $X$ is what it is: it doesn't matter how many samples you take of it."),
+         answer("False", correct = T),
+         allow_retry = T
+         )
+```
+
+```{r TF2, echo = F}
+question("Increasing $n$ would make the distribution of $\\bar{X}$ narrower.",
+         answer("True", correct = T),
+         answer("False"),
+         allow_retry = T
+         )
+```
+
+Note that we haven't said *anything* about the distribution of $X$ itself: the central limit theorem refers to the distribution of $\bar{X}$, the sampling distribution. In fact, $X$ could be anything: any of the distributions we've seen so far, or any other distribution (OK, there are some limitations, but none you'll ever come across in real life). When you think about it, that's pretty crazy. You can take a sample mean of just about anything, and the distribution of that sample mean will be normal with known mean and variance. That means we don't actually need to take repeated samples to know the (approximate) sampling distribution! And since we know the sampling distribution, we can estimate standard errors.
+
+```{r cltPois, echo = F}
+question("What's the standard error of the sample mean of 100 independent samples of $X$, where $X \\sim Poisson(9)$ (which for the Poisson means its mean and variance are both 9)?",
+         answer("0.03"),
+         answer("0.3", correct = T),
+         answer("0.09"),
+         answer("0.9"),
+         answer("Not enough information"),
+         allow_retry = T
+         )
+```
+
+Now let's design a simulation to confirm that the central limit theorem holds and the answer from the question above was truly the correct (approximate) standard error. I'll tell you what to do in English; you convert it into code. Make sure your results are reproducible.
+
+a. Create an object to hold your results
+b. Sample from the Poisson(9) distribution with $n = 100$
+c. Take the sample mean
+d. Repeat steps b-c a large number of times
+e. Calculate a standard error from your estimates
+
+(You may also want to create a histogram to see that they look normal with mean 9)
+
+```{r PoisSim, exercise = TRUE, exercise.lines = 12}
+
+```
+```{r PoisSim-solution}
+set.seed(987)
+res <- rep(NA, 1000)
+for(i in 1:1000) {
+  X <- rpois(100, 9)
+  res[i] <- mean(X)
+}
+sd(res)
+hist(res)
+```
+It turns out that a lot of the estimators we use are based on means and therefore follow the central limit theorem. We can always estimate the variance of the random variable from our sample, and of course we always know the sample size, so the central limit theorem shows up *everywhere*.
+
+#### P-values
+
+Many researchers in the population health sciences and other fields have a love-hate relationship with p-values. They are easy to calculate, show up everywhere, and do have some meaning if interpreted correctly. However, they are often misinterpreted, emphasized too heavily, and used to justify conclusions that aren't warranted. That said, you should be one of the few who understand them, so let's dive in.
+
+When answering a research question, we usually have a hypothesis in mind -- perhaps that some exposure and outcome are related. In the population, this would mean that the exposed group has a different risk of disease than the unexposed group. Importantly, that hypothesized relationship implies a **null hypothesis** as well: there is *no* difference between the groups, or no difference from a specified value. If we denote the difference between the groups with $\theta$, then we can write the null and alternative hypotheses, respectively:
+$$H_0: \theta = 0$$
+$$H_A: \theta \neq 0$$
+Note that here we're referring to the population parameter $\theta$, not some estimate $\hat{\theta}$. We only get to see $\hat{\theta}$ from our sample, but our question is inherently about the population we care about. In our given sample, there will surely be a difference in whatever it is we're measuring; it might be very small or it might be big. Whether that difference exists in the population is what we care about. Of course, it might not, and it may be that we only see a difference in our sample due to sampling variability.
+
+The goal of the p-value is to quantify how likely it is that we would see that difference in our sample if there were truly no difference in the population. That is, what is the probability that we would estimate the $\hat{\theta}$ we did if $\theta = 0$?
+
+Let's assume we're using a sample size and an unbiased estimator to which the central limit theorem applies. Then we know that $\hat{\theta} \sim Normal(\theta, \frac{\sigma^2}{n})$. If $\theta = 0$, as under the null hypothesis, then $\hat{\theta} \sim Normal(0, \frac{\sigma^2}{n})$. For notational simplicity, let's refer to $\frac{\sigma^2}{n}$ as $se^2$, for standard error squared.
+
+Now let's **standardize** our estimate. This means that we divide it by its standard deviation (which is of course the standard error, since we're talking about a sampling distribution): $\frac{\hat{\theta}}{se}$. What this allows us to do is count standard deviation by 1's instead of by multiples of $se$. So the value $se$ used to be 1 standard deviation away from the mean, now the value 1 itself is 1 standard deviation away from the mean. In other words, *under the null hypothesis*,
+$$\frac{\hat{\theta}}{se}\sim Normal(0, 1)$$
+
+```{r normPic, echo = F}
+curve(dnorm(x), xlim = c(-4, 4), xlab = expression(hat(theta)/se), main = "Normal(0, 1)", ylab = "density")
+```
+
+To reiterate, the pdf above is centered at 0 because we are working under the null hypothesis. Calculating a p-value requires assuming that the null hypothesis is true; in this case, that $\theta = 0$.
+
+Now, we know what value of $\hat{\theta}$ we actually got from our sample. We know the value of $se$ because we've been able to calculate it using the central limit theorem. To make this more concrete, let's take the value $se = 2.5$, and imagine that $\hat{\theta} = 5$.
+
+Together those values give us $\frac{\hat{\theta}}{se} = 2$. That means that the $\hat{\theta}$ value we estimated was 2 standard deviations from 0. Let's look at it on the standard normal pdf.
+
+```{r normPic2, echo = F}
+curve(dnorm(x), xlim = c(-4, 4), xlab = expression(hat(theta)/se), main = "Normal(0, 1)", ylab = "density")
+abline(v = 2, col = "red")
+```
+
+Just eyeballing it, we can say that this is a pretty unlikely value in this distribution. In other words, it's a pretty unlikely value to have been estimated from a population in which the null hypothesis is true. But just how unlikely? That's what the p-value tells us.
+
+Think back to when we first learned about continuous distributions and pdfs and cdfs. We saw that when we looked at a pdf, we could calculate probabilities as the area under the curve. Specifically, we could integrate over part of the pdf to find the probability of a value in that interval. We don't care about the probability of the actual value of $\hat{\theta}$ that we got (remember that with a continuous distribution, that probability is 0 anyway). Instead, we care about a value as or more extreme -- that is, equally or further away from 0.
+
+The picture below highlights the probability we're talking about:
+```{r normPic3, echo = F}
+curve(dnorm(x), xlim = c(-4, 4), xlab = expression(hat(theta)/se), main = "Normal(0, 1)", ylab = "density")
+abline(v = c(-1, 1)*2, col = "red")
+coord_x <- c(-4, seq(-4, -2, length.out = 100), -2)
+coord_y <- c(0, dnorm(seq(-4, -2, length.out = 100)), 0)
+polygon(coord_x, coord_y, col = "skyblue")
+coord_x <- c(2, seq(2, 4, length.out = 100), 4)
+coord_y <- c(0, dnorm(seq(2, 4, length.out = 100)), 0)
+polygon(coord_x, coord_y, col = "skyblue")
+```
+
+This picture shows in blue the total probability of drawing a value from a standard normal distribution that is less than -2 or greater than 2. If $\theta = 0$, this is the total probability of drawing a sample for which $\frac{\hat{\theta}}{se}\leq -2$ or $\frac{\hat{\theta}}{se} > 2$. What are the chances that we'd get something this crazy just due to bad luck?
+
+Hopefully you remember how to calculate this area! For the left-hand side of the distribution, we need to calculate $P(\frac{\hat{\theta}}{se} \leq 2)$ for $\frac{\hat{\theta}}{se} \sim Normal(0, 1)$. That's just the cdf of a standard normal: $F(-2)$. And the other side is just its mirror image, so all we have to do is double that area. See if you can calculate this value in R:
+```{r pCalc, exercise = TRUE, exercise.lines = 1}
+
+```
+```{r pCalc-solution}
+2 * pnorm(-2)
+```
+You should get a p-value of 0.0455. Can you put into words what this value means?
+
+There's a lot more to statistical inference (and all of these topics!) than what's on this page. For example, we didn't cover confidence intervals, which are usually a better idea than p-values. Luckily you have a whole year of PHS 2000 -- and the rest of your careers -- to put this into practice and learn more!
+
+#### Final challenge
+
+Write code to calculate a p-value for a difference of two means without using the central limit theorem or any explicit probability calculations (no `pnorm()`, etc.). Everything else is up to you.
+
+Hint: Generate your observed data once. Then think about what it means for the null hypothesis to be true.
+
+If you need more hints or want to check your thinking or your code, email [louisa_h_smith@g.harvard.edu](mailto:louisa_h_smith@g.harvard.edu).

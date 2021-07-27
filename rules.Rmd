@@ -1,0 +1,250 @@
+## Some probability rules 
+
+It's important to be familiar with some basic concepts in probability to understand how statistics works and get the most of out PHS 2000. We'll keep developing skills in R as we start to learn (or review, for some of you) some of these basics in probability and statistics. Some of these ideas will be reiterated in the course, so come back to this tutorial as you encounter them for a quick review.
+
+#### Frequency definition of probability
+If an experiment is repeated $n$ times under identical conditions, and some event $A$ occurs $m$ times, we can define the probability of that event $P(A)$ as the proportion of times the event occurs as $n$ approaches infinity:
+\[P(A) = \lim_{n \to \infty} \frac{m}{n}\]
+For example, imagine a coin is flipped $n$ times. Let $T$ denote the event that 'tails' is face up.
+\[P(T) = \lim_{\# flips \to \infty} \frac{\#\text{ of tails}}{\#\text{ of flips}}\]
+
+We know the probability of flipping 'tails' with a fair coin is 0.5, but if we flip a coin a *finite* number of times, we probably won't get 'tails' exactly half the time. Let's see how close we get, though. Instead of a real coin, we'll use R to simulate flipping a coin $n$ times.
+
+First, we'll start with some number for $n$, let's say 100. We'll assign this value to an object `n` so that we can reuse it later -- and when we increase $n$ toward infinity, we won't need to replace it everywhere. We'll also need a coin with the appropriate sides, 'heads' and 'tails'.
+
+Create an object `n` that is a numeric vector of length 1 with a value of `100` and another object `coin` that is a character vector `"heads", "tails"`.
+
+```{r prep-coin}
+set.seed(123)
+n <- 100
+coin <- c("heads", "tails")
+flips <- sample(coin, size = n, replace = T)
+flips_tails <- flips == "tails"
+m <- sum(flips_tails)
+```
+
+```{r coin1, exercise = TRUE, exercise.lines = 2}
+
+```
+
+```{r coin1-solution}
+n <- 100
+coin <- c("heads", "tails")
+```
+
+Now we need another function to help "flip" the coin. We'll use the function `sample()`, which takes a random sample from a given vector. Functions take "arguments" as input. If you don't know or have forgotten what arguments a function requires, or what it uses as default values if you don't supply it with anything, you can type `?` and the function name to bring up the help file. ([This website](https://www.rdocumentation.org/packages/base/versions/3.5.0/topics/sample) also has the same information, and more, in a more readable format than shows up in this tutorial.)
+
+```{r help, exercise = TRUE, exercise.lines = 1}
+?sample
+```
+
+The sample function takes the arguments `x = `, `size =`, `replace =`, and `prob = `. Both of the final two have default values (`FALSE` and `NULL`, respectively), so we don't need to specify anything in particular if we are happy with those. The help file gives lots of details about what kinds of values or objects each argument can take, as well as a description of what the function does and useful references and examples. 
+
+Returning to our experiment, we'll give the `sample()` function the `coin` vector we created and tell it to sample `size = n` times. We also need the `replace = TRUE` argument, which means that it can sample the same value more than once (Or else you'd be limited to 2 flips, a 'heads' and a 'tails'! Try replacing the `TRUE` with `FALSE` to see what happens.).
+
+```{r coin2, exercise = TRUE, exercise.lines = 2, exercise.setup = "prep-coin"}
+flips <- sample(coin, size = n, replace = TRUE) 
+# unnamed arguments are evaluated in order, so R knows that x = coin
+```
+
+The `flips` object is a character vector of length 100. Here are two useful functions you can use to examine it a little more closely. `length()` gives you the number of elements in a vector, and `head()` lets you look at the first 6 elements (very useful when you have a big object and don't want to print out the whole thing; you can also use `tail()` to look at the last 6).
+```{r coin3a, exercise = TRUE, exercise.lines = 1, exercise.setup = "prep-coin"}
+length(flips)
+```
+
+```{r coin3b, exercise = TRUE, exercise.lines = 1, exercise.setup = "prep-coin"}
+head(flips)
+```
+Now we need an easy way to figure out what fraction of the flips are 'tails'. We already have the denominator, *n*, we just need *m*, the number of 'tails'. Recall that we can check whether things are equal using `==`. Imagine that the `flips` vector only contains two elements: `"heads", "tails"`. If we run `flips == "tails"` with that object, we'll get a logical vector of the same length: `FALSE, TRUE`.
+
+Before continuing with the experiment, play around with this code to see how this and similar examples work:
+```{r coin4, exercise = TRUE, exercise.setup = "prep-coin"}
+c("heads", "tails") == "tails"
+c(53, 19, 392) == 19 # which elements (if any) equal 19?
+1:5 > 2 # which integers from 1 to 5 are greater than ?
+```
+
+Use `==` with our original `flips` object to create a logical vector indicating which elements are 'tails'. Assign this to an object `flips_tails`. Use the `length()` and `head()` functions to explore that object.
+
+```{r coin5, exercise = TRUE, exercise.setup = "prep-coin"}
+
+```
+
+```{r coin5-solution}
+flips_tails <- flips == "tails"
+length(flips_tails)
+head(flips_tails)
+```
+
+Finally we need to count the number of `TRUE` elements in our `flips_tails` object. Recall that we can perform mathematical functions on logical values, and `TRUE` = 1. To count the number of `TRUE`s, we can just sum over the entire `flips_tails` vector, since `FALSE` = 0. We can do that with the `sum()` function.
+
+```{r coin6, exercise = TRUE, exercise.setup = "prep-coin", exercise.lines = 1}
+sum(flips_tails)
+```
+
+(Whenever you are doing something like this, do a quick sanity check. Does this value make sense as the number of 'tails' that would be flipped out of 100 coin flips?)
+
+In order to calculate $\frac{m}{n}$, we need to store that sum as `m` and divide by `n`:
+
+```{r coin7, exercise = TRUE, exercise.setup = "prep-coin", exercise.lines = 2}
+
+```
+
+```{r coin7-solution}
+m <- sum(flips_tails)
+m/n
+```
+
+And that's it! Now you can play around with the code to see what happens when $n \rightarrow \infty$ (though don't make $n$ tooooo big or you might crash this tutorial...). How would you change the code to estimate the probability of flipping 'heads' instead?
+
+```{r coin8, exercise = TRUE}
+n <- 100
+coin <- c("heads", "tails")
+flips <- sample(coin, size = n, replace = TRUE)
+flips_tails <- flips == "tails"
+m <- sum(flips_tails)
+m/n
+```
+
+#### Another experiment
+We have 3 balls in a cup, one blue, one red, one green. 
+
+Let $B$, $R$, and $G$ denote the event that such a color ball is chosen, respectively.
+
+These events are **mutually exclusive**: if you picked blue, you didn't pick red or green. This idea is illustrated by this diagram in which none of the events overlap.
+```{r balls, echo = F, fig.align="center", fig.height=2.5, fig.width = 4.5}
+par(mgp=c(0,0,0), mar= rep(0.5, 4))
+symbols(c(1, 2, 3), c(1, 1, 1), circles = c(.5, .5, .5),
+        bg = c("blue", "red", "green"), inches = F,
+        xlim = c(.5, 3.5), xaxt='n', yaxt = "n", ann=FALSE)
+```
+
+We can also describe this situation by writing
+\[P(B \cap R) = 0\]
+\[P(R \cap G) = 0\]
+\[P(B \cap G) = 0\]
+This tells us you can't pick both at once (the probability of doing so is 0): the events **don't intersect**. The $\cap$ symbol refers to the intersection of those events -- whether they "overlap", or both events could happen at the same time.
+
+So what do we know about $B$ and $R$? Well, there's no possibility of picking $B$ *and* $R$. However, we might pick $B$ *or* $R$ (i.e., something besides $G$)!
+
+\[P(B \cup R) = \lim_{n \to \infty} \frac{\#\text{blue }or\text{ red balls}}{n}\]
+
+$B \cup R$ is the **union** of the two events -- whether *at least* one of the events occurs.
+
+Whenever two events are mutually exclusive, we can just add their individual probabilities to get the overall probability of either one of them. So we can write
+
+\[P(B \cup R) = P(B) + P(R)\]
+
+In English, we can read this as "the probability of choosing a blue *or* a red ball is equal to the sum of the probability of choosing a blue ball and that of choosing a red ball."
+
+See if you can understand what's going on in this code based on the code for the coin experiment we worked on above. (Some steps have been condensed compared to the coin example; in other words, the intermediate objects weren't stored, but used directly in functions.)
+```{r noInt-prep, echo = F}
+set.seed(6789)
+n <- 10000
+draws <- sample(c("Blue", "Red", "Green"), n, replace = T)
+```
+
+```{r noIntersect1, setup = "noInt-prep", exercise = TRUE}
+n <- 10000
+draws <- sample(c("Blue", "Red", "Green"), n, replace = T)
+sum(draws == "Blue")/n
+sum(draws == "Red")/n
+```
+
+If we want to know the probability of blue *or* red, $P(B \cup R)$, we can just add those values together. 
+```{r noIntersect2a, setup = "noInt-prep", exercise = TRUE, exercise.lines = 1}
+sum(draws == "Blue")/n + sum(draws == "Red")/n
+```
+
+This is equivalent to the right-hand side of the mathematical expression above. But we can also check our work with the following code. This represents the left-hand side.
+```{r noIntersect2b, setup = "noInt-prep", exercise = TRUE, exercise.lines = 1}
+sum(draws == "Blue" | draws == "Red")/n
+```
+
+The `|` means "or". Just like before, we're creating logical values, but now they will be `TRUE` if either one of the statements is true, and `FALSE` only if they both are false (in this case, for the elements of `draws` that are `"green"`).
+
+Compare this with `&`: if we write `draws == "Blue" & draws == "Red"`, an element of `draws` will only be `TRUE` if both statements are true. 
+
+```{r blueRed, echo = F}
+question('What do you think `sum(draws == "Blue" & draws == "Red")/n` will be?',
+    answer("R will return an error message"),
+    answer("`NaN`"),
+    answer("0", correct = TRUE),
+    answer("0.3356"),
+    answer("0.6644"),
+    allow_retry = T
+  )
+```
+
+You can play around with all the code here. Notice that you'll get different results every time you run the code. We're working with finite $n$, here, and each time we run the `sample()` function we're running a random process, so we can different values in the `draws` object every time.
+
+```{r noIntersect3, exercise = TRUE}
+n <- 10000
+draws <- sample(c("Blue", "Red", "Green"), n, replace = TRUE)
+sum(draws == "Blue")/n
+sum(draws == "Red")/n
+sum(draws == "Blue" | draws == "Red")/n
+sum(draws == "Blue" & draws == "Red")/n
+```
+
+
+#### Flipping multiple coins
+What if our events aren't mutually exclusive? Let's return to a coin flipping experiment, but imagine this time that the experiment is to flip 2 coins.
+
+Let $H_1$ denote the event that the *first* coin is a 'heads'.
+
+Let $T_2$ denote the event that the *second* coin is a 'tails'.
+
+Keep in mind that there are four possible outcomes of the experiment: 'heads' & 'heads'; 'heads' & 'tails'; 'tails' & 'heads'; and 'tails' & 'tails'. The first event of interest, $H_1$, occurs in the first two outcomes, and $T_2$ occurs in the second and fourth. The fact that the diagram below (not to scale) has an overlapping area depicts the fact that there exists an outcome ('heads' & 'tails') in which both events occur -- their intersection.
+
+```{r 2coins, echo = F, fig.height=3.15, fig.width = 4.5, fig.align="center"}
+par(mgp=c(0,0,0), mar= rep(0.5, 4))
+symbols(c(1, 1.5), c(1, 1), circles = c(.5, .5),
+        inches = F, fg = c("blue", "red"),
+        xlim = c(.5, 2), xaxt='n', yaxt = "n", ann=FALSE)
+text(c(.75, 1.25, 1.75), c(1, 1, 1), labels = c(expression(H[1]), expression("H"*intersect(T)), expression(T[2])), cex = 2.5, col = c("blue", "purple", "red"))
+```
+```{r blueRedQ, echo = F}
+question('What is the probability associated with the overlapping area on the diagram?',
+    answer("0"),
+    answer("1/4", correct = TRUE),
+    answer("1/2"),
+    answer("3/4"),
+    answer("1"),
+    allow_retry = T
+  )
+```
+
+Now they are no longer mutually exclusive: $P(H_1 \cap T_2) \neq 0$. If we want to know the probability of their union -- that is, $P(H_1 \cup T_2)$, the probability that we get a 'heads' first *or* a 'tails' second, we can no longer just add the individual probabilities.
+
+In fact, $P(H_1) = 0.5$ and $P(T_2) = 0.5$ (we're still assuming fair coins), so if we just added the probabilities together, we would have a probability of 1, which doesn't make sense -- it would imply that every single time we flipped two coins, the first would be guaranteed to be a 'heads' *or* the second would be 'tails' (i.e., the 'tails' & 'heads' outcome doesn't exist). This is an overestimate of the probability of the union because $P(H_1)$ includes all those times we *also* get 'tails' next, and $P(T_2)$ includes all those times we *also* got 'heads' first (the overlapping area in the diagram) -- but those two situations are exactly the same outcome, so we are double-counting all the times we get 'heads' & 'tails'. 
+
+We have to subtract off the doubly-counted intersection: $P(H_1 \cup T_2) = P(H_1) + P(T_2) - P(H_1 \cap T_2).$ Since $P(H_1 \cap T_2) = 0.25$ (it occurs in $\frac{1}{4}$ of the possible outcomes), $P(H_1 \cup T_2) = 0.5 + 0.5 - 0.25 = 0.75$.
+
+Note that this formula also applies to the case where the events are mutually exclusive, as in our example with the balls. In that case, the last term is just 0, which is why we could write the simpler expression $P(B \cup R) = P(B) + P(R)$ above.
+
+**Challenge:** See if you can design an experiment in R to simulate this experiment.
+
+```{r coinChallenge, exercise = TRUE, exercise.lines = 10}
+
+```
+
+<div id="coinChallenge-hint">
+**Hint:** Try making two `flips` objects: one for the first coin and one for the second. Remember to name them different things.
+</div>
+
+#### Independence, briefly
+
+To recap, to find the probability of either one of two events (their *union*), we can add their individual probabilities, but if they both can happen at once (they're not *mutually exclusive*) we need to subtract off the probability that they both happen (their *intersection*).
+
+But how do we find the probability that they both happen? It depends on whether the events are **independent**. Independence essentially means that knowing whether one event happened doesn't give you any information about another event. In our coins experiment, knowing that one coin landed on 'heads' tells you nothing about whether the next coin will be 'heads' or 'tails'. (In fact, believing that it does will lead to the [gambler's fallacy](https://en.wikipedia.org/wiki/Gambler's_fallacy)!)
+
+If two events are independent, we can multiply their individual probabilities to get the probability of their intersection:
+\[P(H \cap T) = P(H) \times P(T)\]
+
+In English, this says that the probability that we get a 'heads' first and then a 'tails' is the product of their individual probabilities. We can easily see that $P(H \cap T) = \frac{1}{4}$ because the events occur simultaneously in one of the four possible outcomes, but we also could come to the same conclusion by multiplying the probability of a `heads` on the first flip by the probability of a `tails` on the second flip: $\frac{1}{2} \times \frac{1}{2} = \frac{1}{4}$.
+
+We'll see the idea of independence show up in more detail later in this tutorial, and again and again in the course, but remember that we can only multiply the overall probabilities like this *if* events are independent.
+
+#### More resources
+Start [here](https://www.khanacademy.org/math/ap-statistics/probability-ap/randomness-probability-simulation/v/basic-probability) for another introduction to probability; [here](https://www.khanacademy.org/math/precalculus/prob-comb/compound-probability-of-ind-events-using-mult-rule/v/compound-probability-of-independent-events) for more about independent events in probability.

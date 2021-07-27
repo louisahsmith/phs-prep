@@ -1,0 +1,201 @@
+## Probability density functions
+
+#### Continuous probability distributions
+With **discrete distributions**, we defined the probability mass function (pmf) as $f(x) = P(X = x)$. However, we have left the corresponding function for **continuous distributions** a mystery... until now.
+
+A continuous random variable can take on *any* value within a given interval. Unlike discrete distributions, for which we could list the possible values (even if they go off to infinity, like the Poisson distribution, we can imagine that we could just keep counting and counting...), the possible values of a continuous distribution aren't countable. For example, consider the uniform(0, 1) distribution, which has equal probability over the interval between 0 and 1. What's the first value that comes after 0?
+
+That's of course not a question that you can answer, though it may provide some intuition to the following statement: for a continuous random variable, the *probability of any given value is 0*. That is, $P(X = x) = 0$ for all $x$. If you are drawing from the Poisson(2) distribution we keep looking at, some of the time you'll get values of 0 or 1, for example. But if you are drawing from a uniform(0, 1) distribution, the probability that you'll get exactly 0.5 is 0.
+
+Because of this, we need a function that differs from the pmf: the **probability density function**, or pdf. We can't define the pdf the same way we defined the pmf for a discrete variable. We'll still refer to it as $f(x)$, but its values aren't probabilities, they're "densities". Unlike a probability, a probability *density* can have values that are greater than 1! You can think of them as relative probabilities. Values of $x$ with larger densities are more likely than those with smaller densities.
+
+Let's look at the pdf of the **standard normal distribution**. This is our first continuous probability distribution: the normal, or Gaussian, distribution. This is the one with the famous bell-curve shape.
+
+A normally distributed random variable $X \sim N(\mu, \sigma^2)$ is defined by two **parameters**: its mean ($\mu$) and its variance ($\sigma^2$).
+
+What does that mean? The $\sim$ symbol tells us how the random variable $X$ is distributed (you can read $\sim$ as "is distributed"). In this case, it follows a normal (abbreviated $N$) distribution. The values in parentheses are the parameters that characterize that distribution. The normal distribution has two, but we saw earlier that a Bernoulli distributed random variable is defined by one parameter, its probability $p$, as is a Poisson distributed random variable, which has a rate parameter $\lambda$. We could therefore write $Y \sim Bernoulli(p)$ and $Z \sim Poisson(\lambda)$ for random variables $Y$ and $Z$ that follow those respective distributions.
+
+The standard normal is has mean 0 and variance 1: we could write it normal(0, 1). Here's its pdf:
+```{r normpdf, echo = F}
+curve(dnorm(x, 0, 1), xlim = c(-4, 4), main = "Standard normal pdf", ylab = "density")
+```
+
+```{r mostLikely, echo = F}
+question("Look at the standard normal pdf above. Which value is the most likely?",
+    answer("-4"),
+    answer("0", correct = TRUE),
+    answer("4"),
+    answer("$\\infty$"),
+    allow_retry = T
+  )
+question("Which of these values is more likely?",
+    answer("-2", correct = TRUE),
+    answer("4"),
+    allow_retry = T
+  )
+```
+
+Although the values along the y-axis aren't probabilities, one important thing you should know about pdfs is that no matter the scale on the x-axis or the magnitude of the density values on the y-axis, the function will *always integrate to 1*. That is, $\int_{-\infty}^{\infty} f(x) \, dx = 1$. That's because the total probability of all the possible values of the distribution has to be 1 -- the exact same reason our pmfs for discrete distributions summed to 1.
+
+#### Return to the cdf
+
+We can define the pdf in terms of the cumulative distribution function (cdf), or $F(x)$. Before we do that, let's review cdfs, and in particular, see that we can apply them to continuous distributions.
+
+Remember that the cdf is defined as $F(x) = P(X \leq x)$. This holds true for both continuous and discrete random variables. 
+
+Also remember what we said about the whole pdf integrating to 1: the area under the curve represents the total probability. So if we want to know, say, $F(1) = P(X \leq 1)$ we can just integrate over the pdf from $-\infty$ to $1$:
+\[F(1) = \int_{-\infty}^1 f(x) \,dx \; \text{, where } f(x) \text{ is the standard normal pdf.}\]
+
+```{r normpdfCol, echo = F}
+curve(dnorm(x, 0, 1), xlim = c(-4, 4), main = "P(X <= 1)", ylab = "density")
+coord_x <- c(-4, seq(-4, 1, length.out = 1000), 1)
+coord_y <- c(0, dnorm(seq(-4, 1, length.out = 1000)), 0)
+polygon(coord_x, coord_y, col = "skyblue")
+```
+
+It turns out that the blue area, $F(1) \approx `r round(pnorm(1), 5)`$. That's the probability that a standard normal random variable is $\leq 1$. We'll come back to this number in a bit.
+
+#### Intuiting the cdf and its relationship with the pdf
+
+Take a second to think about what the function $F(x)$ looks like for the standard normal, based on the picture of its pdf. (Try to draw it out!) Think about how the integral changes as you increase the values of $x$. How does $F(-2)$ compare to $F(-1)$ and $F(0)$? What are the limiting values as $x$ approaches $- \infty$ and $\infty$? Make sure your drawing of $F(x)$ matches the correct answers to the following questions, which you should know from the introduction to cdfs in the context of discrete distributions.
+
+```{r Fquiz, echo = F}
+question("How would you describe the function $F(X)$?",
+    answer("Increasing", correct = TRUE),
+    answer("Decreasing"),
+    answer("Sometimes increasing, sometimes decreasing"),
+    answer("Flat everywhere"),
+    allow_retry = T
+  )
+  question("For continuous distributions, the cdf can take on values greater than 1.",
+    answer("True", message = "The pdf, but not the cdf, can."),
+    answer("False", correct = TRUE),
+    allow_retry = T
+  )
+    question("For continuous distributions, the cdf can take on values less than 0.",
+    answer("True"),
+    answer("False", correct = TRUE),
+    allow_retry = T
+  )
+```
+
+Does this look like what you drew? This is the standard normal cdf:
+
+```{r cdfpic, echo = F}
+curve(pnorm(x, 0, 1), xlim = c(-4, 4), main = "F(x)", ylab = "cumulative probability")
+```
+
+We have defined the cdf as $P(X \leq x)$, and we have some idea about how it's related to the pdf via an integral. We still don't actually have a definition for the pdf, though!
+
+Remember something super important from calculus? Like, say, its Fundamental Theorem? It basically told us we could go back and forth between derivatives and integrals. We have the cdf in terms of the integral of the pdf, so let's just go backwards and define the pdf in terms of the derivative of the cdf.
+
+\[f(x) = F'(x) = \frac{d}{dx}F(x)\]
+
+What is this telling us? If we evaluate the derivative of the cdf at any point $x$, we get the density at that point, or $f(x)$. 
+
+Is this intuitive? Look back at the graph of the standard normal cdf.
+
+```{r Fxq, echo = F}
+question("Where is the derivative of $F(x)$ the largest?",
+    answer("-4"),
+    answer("0", correct = TRUE),
+    answer("4"),
+    allow_retry = T
+)
+```
+
+The slope of the function $F(x)$ is steepest at 0. That means its derivative, and therefore $f(x)$, is the largest at 0. Does this match what we saw in the graph of $f(x)$ above?
+
+What about when $F(x)$ is the flattest, and $f(x)$ the smallest -- that is, around -4 or 4? (If this graph could go from $-\infty$ to $\infty$ it would, those are just arbitrary endpoints.) Well, $P(X \leq -4)$ is not much different from $P(X \leq -3.75)$, and $P(X \leq 4)$ is not much different from $P(X \leq 4.25)$ because there's not a lot of chance that the random variable will take on values in those intervals. That matches what we saw in the pdf: the density, or relative probability, between each pair of those values is very low. Around 0, however, the density is high, so $P(X \leq -0.25)$ is very different from $P(X \leq 0)$ is very different from $P(X \leq 0.25)$.
+
+#### Other examples of distributions
+
+For each of the following three distributions, compare the cdf to the pdf. Find the x-values with the highest densities and note that they correspond to the places on the cdf with the largest slope. Confirm that each pdf and cdf adheres to the rules that we've laid out for them.
+```{r expCompare, echo = F}
+par(mfrow = c(1, 2))
+curve(pexp(x, 1), xlim = c(0, 4), main = "exponential(1) cdf", ylab = "F(x)")
+curve(dexp(x, 1), xlim = c(0, 4), main = "exponential(1) pdf", ylab = "f(x)")
+par(mfrow = c(1, 1))
+```
+
+```{r chiCompare, echo = F}
+par(mfrow = c(1, 2))
+curve(pchisq(x, 3), xlim = c(0, 10), main = "chi-squared(1) cdf", ylab = "F(x)")
+curve(dchisq(x, 3), xlim = c(0, 10), main = "chi-squared(1) pdf", ylab = "f(x)")
+par(mfrow = c(1, 1))
+```
+
+```{r betaCompare, echo = F}
+par(mfrow = c(1, 2))
+curve(pbeta(x, .5, .5), xlim = c(0, 1), main = "beta(.5, .5) cdf", ylab = "F(x)")
+curve(dbeta(x, .5, .5), xlim = c(0, 1), main = "beta(.5, .5) pdf", ylab = "f(x)")
+par(mfrow = c(1, 1))
+```
+
+#### The normal distribution in R
+
+It turns out that the pdf for the normal distribution is defined by:
+$$f(x) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{1}{2}\left(\frac{x - \mu}{\sigma}\right)^2\right)$$
+so we can just integrate that function from $-\infty$ to 1 with $\mu = 0$ and $\sigma^2 = 1$ to get $F(1)$, the value that we saw above was equal to about 0.84. We don't expect you to do that yourselves, though! That's what R is for. 
+
+Remember how we used functions for the cdfs of discrete random variables using the prefix `p` earlier? We can do the same with continuous distributions. The "shortcut" for the normal distribution is `norm`, and the set of functions take the arguments `mean = ` and `sd = ` (note the use of $\sigma$ as an argument, although we usually refer to the variance parameter $\sigma^2$ when we're talking about the normal distribution). It turns out that the default values of `mean=` and `sd=` are 0 and 1, respectively, so if you want the standard normal, you don't need to specify the parameters.
+
+See if you can find $F(1)$ for the standard normal.
+
+```{r F1, exercise = TRUE, exercise.lines = 1}
+
+```
+
+```{r F1-solution}
+pnorm(1)
+```
+
+Let's think about what this value means for a bit. 
+
+If we were able to draw an infinite number of samples from a standard normal distribution, then about 84% of them would be < 1. When are we ever drawing infinite samples from a standard normal distribution though? If you said never, you're absolutely right. Nonetheless, this and other values from the standard normal cdf are still incredibly helpful and you will end up using them all the time!
+
+Let's first see what it would look like if we could draw a ton (though not an infinite number!) of realizations from a standard normal, which R allows us to do. The prefix R, when used with the distributional abbreviations, gives random (really pseudo-random) draws from that distribution. Let's save 1,000,000 of them to the vector `x`. Try using the functions you know on that vector. Don't print out the whole vector, though, because it's huge! You can also try to figure out other functions which may be useful -- often they're very common-sense. Try `sd()` or `min()`.
+```{r norm-prep, echo = F}
+set.seed(123)
+x <- rnorm(1000000)
+```
+
+(Note the line `set.seed(123)` below. This gives R a certain random number to start at so that we can all get the same values on our computers. Whenever you're running code with a `set.seed()` command, make sure to re-run that line every time you re-run the code, so your results match up. If you're doing your own simulation, pick a random integer as an argument for the function -- don't always use `123`!)
+```{r xnorm, exercise = TRUE, exercise.lines = 4, exercise.setup = "norm-prep"}
+set.seed(123)
+x <- rnorm(1000000)
+```
+
+Let's first try to recreate the pdf for the standard normal using these data. Remember that since we are in the continuous case, $f(x) \neq P(X = x)$ for $X \sim Normal(0, 1)$. To see this in action, consider $P(X = 0)$. This is the mean of the distribution -- and the height of the bell shape, so we might expect the largest value if we run `mean(x == 0)` (recall that's how we can estimate a probability from that data).
+
+```{r dens, exercise = TRUE, exercise.lines = 1, exercise.setup = "norm-prep"}
+mean(x == 0)
+```
+You were certainly expecting this if you looked at the data, perhaps with `head(x)`. Of course none of them would be exactly 0.
+
+Now see if you can estimate $F(1)$ using these data.  
+
+```{r propLT1, exercise = TRUE, exercise.setup = "norm-prep", exercise.lines = 2}
+
+```
+
+```{r propLT1-hint-1, error = TRUE}
+mean(...) # what logical statement should you use?
+```
+
+```{r propLT1-hint-2}
+mean(x <= 1)
+```
+
+You didn't get exactly $`r round(pnorm(1), 5)`$, because we are working with a finite sample, so we can only **estimate** $F(1)$, with some error. It should be close, though! (That's because of the law of large numbers, which tells us that sample means approach expected values as $n$ approaches $\infty$. We'll look at expected values in the next section.)
+
+Finally, let's see if the values we drew in match the standard normal cdf in general, and not just at $F(1)$. Instead of checking every possible value between $-\infty$ and $\infty$ (impossible!) we can use the `ecdf()` (empirical cumulative distribution function) command. We'll then plot a dashed red line with the true values on top to compare (don't worry about the code here, but see if you can decode it, perhaps using the help files as a guide).
+
+```{r ecdf, exercise = TRUE, exercise.setup = "norm-prep", exercise.lines = 2}
+plot(ecdf(x))
+curve(pnorm(x), add = TRUE, col = "red", lty = "dashed")
+```
+Looks great!
+
+#### More resources
+Learn more about continuous random variables and probability density functions [here](https://www.khanacademy.org/math/statistics-probability/random-variables-stats-library/random-variables-continuous/v/probability-density-functions).

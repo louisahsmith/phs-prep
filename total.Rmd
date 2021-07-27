@@ -1,0 +1,245 @@
+## Total probability and Bayes
+One very important skill is manipulating conditional and marginal probabilities. Think of it like a puzzle: you have all the pieces you need, and you need to figure out how to put them together to answer the question you want.
+
+We have several pieces of information from the previous section. We know that $P(D = 1) = 0.3$, that $P(T = 1 | D = 1) = 0.9$, and $P(T = 1 | D = 0) = 0.2$ (remember that since $D$ and $T$ are binary variables, we also know $P(D = 0)$ and $P(T = 0| D = d)$ as well). 
+
+Now, what if we want to know the marginal probability $P(T = 1)$? For example, maybe we have a second test that is used after a positive first test to confirm disease. We want to know how many of these second-round tests to order, which requires knowing how many people overall will test positive in the first place.
+
+To illustrate, we began with two groups of people, the diseased and non-diseased, who take up these proportions of the population:
+```{r cond1, echo = F, fig.height = 2.5, fig.width = 6, fig.align = "center"}
+  par(mgp = c(3, 1, 0), mar = c(2, 2, 1, 1))
+plot(NULL, ylim = c(0, 1), xlim = c(0, 1))
+abline(v = .7)
+text(c(.35, .875), c(.5, .5), labels = c("P(D = 0) = 0.7", "P(D = 1) = 0.3"), col = c("blue", "red"))
+```
+
+Then, within each of the two strata, we came up with conditional probabilities for testing positive and negative. Notice that *within* the two conditioning statements (i.e., on both the left- and right-hand sides of the diagram), the probabilities sum to 1. This should let us know intuitively that we can't add *across strata*; for example, to find $P(T = 1)$, we can't just add $P(T = 1 | D = 0) + P(T = 1 | D = 1)$.
+
+```{r cond2, echo = F, fig.height = 2.5, fig.width = 6, fig.align = "center"}
+  par(mgp = c(3, 1, 0), mar = c(2, 2, 1, 1))
+plot(NULL, ylim = c(0, 1), xlim = c(0, 1))
+abline(v = .7)
+segments(-0.2, .8, .7, .8, col = "blue")
+segments(.7, .1, 1.2, .1, col = "red")
+text(c(.35, .875, .35, .875), c(.9, .55, .4, .03), labels = c("P(T = 1 | D = 0) = 0.2", "P(T = 1 | D = 1) = 0.9", "P(T = 0 | D = 0) = 0.8", "P(T = 0 | D = 1) = 0.1"), col = c("green", "green", "purple", "purple"))
+```
+
+Instead, we have to "weight" the conditional probabilities by the respective size of their strata before we can add them. The size of the strata is just $P(D = d)$. "Weighting" by these marginal probabilities gives us **joint probabilities** of $T$ and $D$ (recall that the joint probability is the probability of the intersection of two values of $T$ and $D$): $$P(T = t, D = d) = P(T = t | D = d)P(D = d)$$
+
+The calculations for each combination of $T$ and $D$ are shown below. Confirm on your own that *these* values all sum to 1.
+
+```{r total, echo = F, fig.height = 2.5, fig.width = 6, fig.align = "center"}
+par(mgp = c(3, 1, 0), mar = c(2, 2, 1, 1))
+plot(NULL, ylim = c(0, 1), xlim = c(0, 1))
+abline(v = .7)
+segments(-0.2, .8, .7, .8, col = "blue")
+segments(.7, .1, 1.2, .1, col = "red")
+text(c(.35, .875, .35, .875), c(.9, .55, .4, .05), labels = c("P(T = 1, D = 0) = 0.2 x 0.7", "P(T = 1, D = 1) = 0.9 x 0.3", "P(T = 0, D = 0) = 0.8 x 0.7", "P(T = 0, D = 1) = 0.1 x 0.3"), col = c("blue", "red", "blue", "red"), cex = 0.85)
+```
+Now we can sum the joint probabilities that involve $T = 1$ over all the possible values of $D$ to calculate the marginal probability of $T = 1$:
+
+\begin{equation*}
+\begin{split}
+P(T = 1) & = \sum_{d = 0}^1 P(T = 1, D = d) \\
+& = \sum_{d = 0}^1 P(T = 1 | D = d)P(D = d) \\
+& = 0.9 \times 0.3 + 0.2 \times 0.7 \\
+& = 0.41
+\end{split}
+\end{equation*}
+
+Decomposing a marginal probability into the sum of conditional probabilities given another variable is called the **law of total probability**. Note that we could solve for the marginal probability of $T = 1$ if we knew its conditional probabilities given *any* other variable, not just disease. We can write the law of total probability generally as
+$$P(X = x) = \sum_{y \in \mathcal{Y}}P(X = x | Y = y)P(Y = y)$$
+where the notation $y \in \mathcal{Y}$ just means that we are summing over all the possible values that $Y$ can take on.
+
+This idea of "weighting" by probabilities will come up again later, when you'll learn about expectations, including mean and variance. You'll also see then how the same concept comes into play with continuous random variables, where these ideas also hold.
+
+#### Bayes' theorem
+
+We saw above that we can decompose a joint probability into the product of a marginal and a conditional probability: $P(T = t, D = d) = P(T = t | D = d)P(D = d)$. This statement told us that It turns out the same holds true even if we switch which variable is in the conditioning statement: $P(T = t, D = d) = P(D = d | T = t)P(T = t)$. In words, we can think of this as the probability of some combination of testing and disease status being equal to the product of the probability of disease given some test result and the overall probability of that test result.
+
+We can use the fact that these two probabilities are equal:
+$$P(T = t | D = d)P(D = d) = P(D = d | T = t)P(T = t)$$
+to come up with Bayes' theorem:
+$$P(T = t | D = d) = \frac{P(D = d | T = t)P(T = t)}{P(D = d)}.$$
+
+Bayes' theorem can be used to "switch" what we're conditioning on in a probability. In some situations, it may be useful to know what the probability of testing positive given disease is (this is also known as sensitivity). In other situations, it may be useful to know what the probability of having disease given a positive test is (this is also known as positive predictive value). While the former may be useful while developing and comparing tests, the latter is particularly useful to a patient who has just tested positive. If we want to let this patient know how worried they should be, we can simply switch the condition:
+$$P(D = d | T = t) = \frac{P(T = t | D = d)P(D = d)}{P(T = t)}.$$
+
+```{r ppv, echo = F}
+question("Given the information we've seen so far, what's the positive predictive value, $P(D = 1 | T = 1)$, of this test?",
+    answer("0.41"),
+    answer("0.56"),
+    answer("1.23"),
+    answer("0.77"),
+    answer("0.66", correct = TRUE),
+    allow_retry = T
+  )
+```
+
+Remembering that we can decompose the marginal probability in the denominator of Bayes' law, we can write things more generally as:
+$$P(Y = y | X = x) = \frac{P(X = x | Y = y)P(Y = y)}{ \sum_{y' \in \mathcal{Y}}P(X = x | Y = y')P(Y = y')}$$
+Note the notation in the denominator. To distinguish the values of $Y$ in the summation from the particular value $y$ of interest, we can denote them $y'$. We do sum over that particular value $y$ as well, though, because we are summing over *all* the possible values!
+
+#### Return to the R data
+
+We'll look back at the data we used in the previous section to confirm that everything we learned in this section holds true.
+
+We used the fact that $T$ and $D$, or `test` and `disease`, were binary variables and that we were interested in the proportions equal to 1 to easily find those proportions in R with the `mean()` function. However, what if we want to find the probability of testing negative in the population, $P(T = 0)$? OK, we could easily subtract $1 - P(T = 1)$ using the code `1 - mean(dat$test)`, but when we're looking at variables that aren't binary, we won't be able to do that.
+
+We actually already saw the solution to this problem in the section on probability rules, but here we'll formalize it a little. Whenever we want to turn something into a binary 0/1 variable, we can use indicator notation, which uses $I()$ to turn values that make whatever statement is in the parentheses true into 1, and anything that is false to 0. When we summed over the series of $n$ coin flips earlier in this tutorial using the R code `sum(flips == "tails")`, we could have written something like this:
+$$\sum_{i = 1}^n I(flip_i = heads)$$
+Like the R code, which uses `==` to turn a statement into `TRUE` or `FALSE` values, which are then summed as if they have the values 1 or 0, this expression tells us to look at each of the $n$ flips, indexed by $i$, and evaluate whether it was heads or not: if yes, it's equal to 1, if not, it's 0.
+
+We can therefore use the `mean()` function to find $P(D = 0)$. We want to calculate
+$$\frac{1}{n} \sum_{i = 1}^n I(D = 0).$$
+In R, we could do this as follows:
+
+```{r d0, exercise = TRUE, exercise.lines = 1, exercise.setup = "disease-prep"}
+mean(dat$disease == 0)
+```
+
+There are two (actually, more!) ways to find the marginal probability that `test = 1` in the `dat` dataset: by calculating it directly, and by using the law of total probability to calculate all the component parts and sum them. Using only R commands (and no probabilities that you've previously been given), calculate $P(T = 1)$ and $\sum_{d = 0}^1  P(T = 1 | D = d)P(D = d)$ to confirm they're the same.
+```{r testProp, exercise = TRUE, exercise.lines = 5, exercise.setup = "disease-prep"}
+
+```
+
+```{r testProp-hint-1}
+mean(dat$test)
+```
+
+```{r testProp-hint-2}
+d1 <- subset(dat, subset = disease == 1)
+d0 <- subset(dat, subset = disease == 0)
+```
+
+```{r testProp-hint-3}
+d1 <- subset(dat, subset = disease == 1)
+d0 <- subset(dat, subset = disease == 0)
+mean(d0$test)*mean(dat$disease == 0) + mean(d1$test)*mean(dat$disease)
+```
+
+We can use indicator notation with any kind of true/false statement. Let's say we also have information on age, and we want to know if disease prevalence differs between young (< 50 years old) and old (50+ years old). Age in years is now stored in the `dat` dataset in the variable `age`. First use the coding window to explore the age distribution of the population and then answer the questions below.
+
+```{r age-prep, echo = F}
+set.seed(6789)
+n <- 100
+disease <- c(rep(1, n * 0.3), rep(0, n * 0.7))
+test <- c(rep(1, n * 0.3 * 0.9), rep(0, n * 0.3 * 0.1), rep(1, n * 0.7 * 0.2), rep(0, n * 0.7 * 0.8))
+age <- round(100*runif(n))
+dat <- data.frame(disease, test, age)
+dat$age <- ifelse(dat$disease, dat$age + 5, dat$age)
+```
+
+```{r ageDist, exercise = TRUE, exercise.lines = 3, exercise.setup = "age-prep"}
+
+```
+
+<div id="ageDist-hint">
+**Hint:** Remember the dollar sign format: the variable is accessible with the code `dat$age`. What function have you learned that will answer both of the following questions at once?
+</div>
+
+```{r ageMax, echo = F}
+question("What's the maximum age in this population?",
+    answer("1"),
+    answer("71"),
+    answer("99"),
+    answer("100"),
+    answer("103", correct = TRUE),
+    allow_retry = T
+  )
+```
+
+```{r ageD1, echo = F}
+question("What's the mean age in the diseased portion of the population?",
+    answer("51", message = "We want just those for whom disease = 1"),
+    answer("52", message = "We want just those for whom disease = 1"),
+    answer("53", message = "We want just those for whom disease = 1"),
+    answer("56", correct = TRUE),
+    answer("71"),
+    allow_retry = T
+  )
+```
+
+Now let's use our R and Bayes' theorem skills to find the disease prevalence among the "old" portion of our population. We'll denote age in years with $A$, so that we can write the probability we're looking for:
+$$P(D = 1 | A \geq 50)$$
+Before looking below, practice using Bayes' theorem to write out that conditional probability in terms of other probabilities you may have.
+
+We might use Bayes' theorem in this situation if we are doing a case-control study, which would allow us to estimate $P(A \geq 50 | D = 1)$ (i.e., the proportion of "old" people among the cases), and we already know the overall prevalence of disease ($P(D = 1$)) and age distribution (specifically, $P(A \geq 50)$) in the population. Then we can combine these pieces of information to get
+$$P(D = 1 | A \geq 50) = \frac{P(A \geq 50 | D = 1)P(D = 1)}{P(A \geq 50)}$$
+Does this match what you wrote down?
+
+As for finding these quantities using R, we can go about this a number of ways. We've already seen two ways to get $P(D = 1)$, using the `prop.table()` and `table()` functions, or using the `mean()` function. Use both of these methods to find $P(A \geq 50)$.
+
+```{r propAge, exercise = TRUE, exercise.lines = 2, exercise.setup = "age-prep"}
+
+
+```
+
+```{r propAge-hint-1}
+mean(dat$age >= 50)
+```
+
+```{r propAge-hint-2}
+mean(dat$age >= 50)
+prop.table(table(dat$age >= 50))
+```
+
+When we used the `mean()` function, what we were really calculating could be written out like this:
+$$\frac{1}{n}\sum_{i = 1}^n I(A_i \geq 50)$$
+We're summing up the number of people in the population whose age is greater or equal to 50, and dividing by the total number of people. Using that same idea, think about how we could find $P(A \geq 50 | D = 1)$ before reading on.
+
+Whenever we have a conditioning statement like $D = 1$ above, we're looking in some subset of the population. That means that any fractions will have a different denominator: only those people for whom $D = 1$. So we might write $P(A \geq 50 | D = 1)$ as a mean like this:
+$$\frac{1}{n_1}\sum_{i = 1}^{n_1} I(A_i \geq 50 \cap D = 1)$$
+Now we are totaling the number of people whose age is greater or equal to 50 *and* have disease (recall that the intersection symbol $\cap$ means that *both* events must happen), and we are dividing by $n_1$, which I will define as the number of diseased people. One way we could get these numbers is from a 2-by-2 table:
+```{r twobytwo, exercise = TRUE, exercise.lines = 1, exercise.setup = "age-prep"}
+addmargins(table(dat$age >= 50, dat$disease))
+```
+where 19 is the number over 50 and with disease ($\sum_{i = 1}^{n_1} I(A_i \geq 50 \cap D = 1)$) and 30 is the number of diseased people, our denominator $n_1$.
+
+Obviously we could have more easily calculated the proportion $\frac{19}{30} = 0.63$ using the `prop.table()` function. Recall that we need to use the `margin = ` argument to find a conditional probability. Try it out below:
+```{r agePropTable, exercise = TRUE, exercise.lines = 1, exercise.setup = "age-prep"}
+
+```
+
+```{r agePropTable-solution}
+prop.table(table(dat$age >= 50, dat$disease), margin = 2)
+```
+
+Along with using tables, we could also use the `sum()` function to come up with the values 19 and 30. See if you can do so. Remember from the probability rules section how we can find the intersection $\cap$ of two events.
+
+```{r ageSums, exercise = TRUE, exercise.lines = 2, exercise.setup = "age-prep"}
+
+```
+
+```{r ageSums-solution}
+sum(dat$age >= 50 & dat$disease == 1)
+sum(dat$disease == 1)
+```
+
+Finally, we could of course also calculate this conditional probability by using the `mean()` function only in the subset of the population for whom $D = 1$. You've already made that subsetted dataset. Confirm that $P(A \geq 50| D = 1)$ using this method as well.
+
+```{r d1Age, exercise = TRUE, exercise.lines = 1, exercise.setup = "age-prep"}
+
+```
+
+```{r d1Age-solution}
+mean(d1$age >= 50)
+```
+
+Finally, put all the pieces together to calculate $P(D = 1 | A \geq 50)$, using only R functions and none of the values you've previously calculated. You may want to make some objects along the way to store the different pieces. Also calculate the probability directly using the `mean()` function in the subset of the population greater or equal to 50.
+
+```{r ageBayes, exercise = TRUE, exercise.lines = 6, exercise.setup = "age-prep"}
+
+```
+
+```{r ageBayes-solution}
+pAgivenD <- sum(dat$age >= 50 & dat$disease == 1) / sum(dat$disease == 1)
+pD <- mean(dat$disease)
+pA <- mean(dat$age >= 50)
+pAgivenD * pD / pA
+above50 <- subset(dat, age >= 50)
+mean(above50$disease)
+```
+
+#### More resources
+Watch [this](https://www.youtube.com/watch?v=d4WZHz1arG8) for another example of the law of total probability. [Here](https://www.khanacademy.org/math/ap-statistics/probability-ap/stats-conditional-probability/v/bayes-theorem-visualized) and [here](https://www.khanacademy.org/partner-content/wi-phi/wiphi-critical-thinking/wiphi-fundamentals/v/bayes-theorem) are two videos on Bayes' theorem. The second is from a philosophical perspective if you want something a little different!

@@ -1,0 +1,150 @@
+## Cumulative distribution functions
+Another way we can characterize probability distributions is via their **cumulative distribution functions** (cdfs). While only **discrete** distributions have pmfs (later we'll see what **continuous** distributions have instead), both discrete and continuous distributions have cdfs, defined as
+
+\[F(x) = P(X \leq x)\]
+
+Returning to our example of the fair coin, we can plug in the two values that the random variable $X$ can take on:
+
+- $F(0) = P(X \leq 0) = 0.5$
+
+- $F(1) = P(X \leq 1) = 1$
+
+We could in fact plug in any value of $x$: the cdf of a **discrete** distribution is a step function with jumps at each of its possible realizations:
+
+```{r cdf, fig.height=3, fig.width = 4.5, fig.align="center", echo = F}
+x <- c(0, 1)
+probs <- c(0.5, 0.5)
+cdf_func(x, probs)
+```
+
+This may seem kind of strange. It is essentially just telling us that the probability of a 'tails' ($P(X \leq 0)$, since 'tails' is 0) is 0.5 and the probability of a 'heads' *or* a 'tails' ($P(X \leq 1)$) is 1. The probability of neither 'heads' nor 'tails' ($P(X < 0)$) is of course 0. We aren't getting any new information from a cdf that we couldn't get from a pmf -- we'll see directly how they relate later -- but it turns out that cdfs are very useful.
+
+Just like pmfs, cdfs follow certain rules:
+
+- As $x$ approaches $- \infty$, $F(x) = 0$
+
+- As $x$ approaches $\infty$, $F(x) = 1$
+
+- $F(x)$ is non-decreasing (it never gets smaller as $x$ increases)
+
+Confirm that the graph above adheres to these rules. Then think about how these rules connect to those we saw for pmfs (we'll look at the connection more explicitly later). 
+
+We know that no probability $P(X = x)$ can be less than 0 or greater than 1; we also know that the total probability over all values of $x$ must equal 1 exactly. The fact that the probabilities $P(X = x)$ can't be negative  tells us why the cdf must be non-decreasing -- we can never decrease in cumulative probability when moving from left to right along the x-axis of the cdf. This also explains why the lower limit is 0. The upper limit must be 1 because the total probability $P(X \leq x)$ must be 1 at its most extreme value (possibly approaching $\infty$, though for the fair coin the largest possible value the random variable can take is only 1).
+
+#### Another example
+
+We briefly looked at a distribution defined by 
+\[f(x) = \begin{cases} 
+      0.1 & \text{for } x =  0 \\
+      0.5 & \text{for } x =  1 \\
+      0.4 & \text{for } x =  2 \\
+   \end{cases}
+\]
+What does $F(x)$ look like? (Like `pdf_func()`, `cdf_func()` is a special function for this tutorial that you won't find in base R. It takes the same arguments as `pdf_func()`, that is, the values $P(X = x)$ from the pmf.)
+```{r cdfPractice, exercise = TRUE, exercise.eval = T, fig.height=2.75, fig.width = 4.5, fig.align="center", exercise.lines = 3}
+x <- 0:2
+fx <- c(0.1, 0.5, 0.4)
+cdf_func(x, fx)
+```
+Try replacing the values above with those from other pdfs we've looked at (you'll need to change both `x` and `fx`, and make sure they're the same length). Confirm that they meet the above criteria. Then try the ones you considered in last section's multiple choice question that didn't correspond with true probability distributions, and see that they don't follow the rules.
+
+#### Lots of coins
+
+Now let's look at an example in which a cdf may be particularly useful. Instead of flipping one coin, imagine we are flipping ten coins and counting the number of 'heads' (this is the binomial distribution with parameter $n = 10$, or `size = 10` in R language). Again we'll call this random variable (the total number of 'heads' in ten flips) $X$.
+
+```{r numHeads, echo = F}
+question("What are the possible values of $X$?",
+         answer("0, 1"),
+         answer("0, 1, ..., 5"),
+         answer("6, 7, ..., 10"),
+         answer("1, 2, ..., 10"),
+         answer("0, 1, ..., 10", correct = T),
+         allow_retry = T
+         )
+```
+
+If you pay \$5 to enter the game, your friend agrees to pay you \$1 for every 'heads' you flip (you trust that your friend is playing with a fair coin). You want to know what the chances are that you'll lose money on the game, that is, that you'll get a value of $X$ that's less than 5.
+
+```{r loseMoney, echo = F}
+question("Which probability function will give us the probability of losing money?",
+         answer("F(4)", correct = T),
+         answer("F(5)", message = "Recall the $\\leq$ sign"),
+         answer("F(10)", message = "Recall the $\\leq$ sign"),
+         answer("f(4)", message = "This will give us the probability of 4 'heads'"),
+         answer("f(5)", message = "This will give us the probability of 5 'heads'"),
+         answer("f(10)", message = "This will give us the probability of 10 'heads'"),
+         allow_retry = T
+         )
+
+```
+
+The cdf is useful here because we want to know the probability of a set of outcomes: in this case, the outcomes $X = 0$, $1$, $2$, $3$, or $4$. If $X = 5$, we come out even, and if $X > 5$, we come out ahead. 
+
+In order to calculate this probability, we need to know $P(X = 0)$, $P(X = 1)$, $P(X = 2)$, $P(X = 3)$, and $P(X = 4)$. Only one of these things can happen in a given game -- they are mutually exclusive -- so we can just add their probabilities to find the probability that *any* one of them happens. 
+$$P(X \leq 4) = P(X = 0) + P(X = 1) + P(X = 2) + P(X = 3) + P(X = 4)$$
+We could also write this
+$$P(X \leq 4) = \sum_{x = 0}^4 P(X = x)$$
+This tells us the relationship between the pmf and the cdf. For a discrete random variable which can take on a minimum value of 0, as in our scenario and many other distributions, $F(x) = \sum_{i = 0}^x f(i)$.
+
+If we look at a graph of the cdf for our coin game, we can see what's going on. At each jump (from an open circle to a closed circle), we are simply adding $P(X = x)$, or $f(x)$, for that $x$-value. 
+
+```{r index-1, fig.height=3, fig.width = 4.5, fig.align="center", echo = F}
+x <- 0:10
+probs <- dbinom(x, 10, .5)
+cdf_func(x, probs)
+```
+We can see from the graph that we have less than 40% chance of losing money by playing the game. Maybe you're willing to take that risk, maybe you're not. Or maybe you can look at the cdf and decide to negotiate with your friend to pay only $4 to enter, which would just about halve your chances of losing out.
+
+
+#### Cumulative distribution functions in R
+
+In the last section we saw that there is a class of functions in R that begin with `d`, followed by an abbreviation for the name of a probability distribution. We used these to find values from the pmfs for those distributions. Now will see that the functions for cdfs operate similarly, only these begin with `p`.
+
+The first two lines are from the last section; the third shows how to change the code (very slightly!) to get the cdf. Add a final line using the `cbind()` function to print out the `x` and `Fx` values to confirm they match what we have for the cdf above.
+```{r binomCDF, exercise = TRUE, exercise.lines = 4}
+x <- c(0, 1)
+fx <- dbinom(x, size = 1, prob = 0.5)
+Fx <- pbinom(x, size = 1, prob = 0.5)
+```
+
+```{r binomCDF-solution}
+x <- c(0, 1)
+fx <- dbinom(x, size = 1, prob = 0.5)
+Fx <- pbinom(x, size = 1, prob = 0.5)
+cbind(x, Fx)
+```
+
+We also saw the Poisson pmf in the last section. Finish the second line of code to compute the correct values for the Poisson cdf with $\lambda = 2$. Print out the values as in the box above, and then eyeball the graph of the cdf below to make sure they match.
+```{r cdfPois, exercise = TRUE, fig.height=2.75, fig.width = 4.5, fig.align="center", exercise.lines = 3, error = TRUE}
+x <- 0:10
+Fx <- 
+```
+
+```{r cdfPois-solution}
+x <- 0:10
+Fx <- ppois(x, lambda = 2)
+cbind(x, Fx)
+```
+
+```{r index-2, fig.height=3, fig.width = 4.5, fig.align="center", echo = F}
+x <- 0:10
+probs <- dpois(x, lambda = 2)
+cdf_func(x, probs)
+```
+
+Like we said earlier, the coin game in the last example fits the **binomial** probability distribution. The binomial distribution is just the sum of independent Bernoulli trials, or individual coin flips. When we previously used the `binom` functions, we used the argument `size = 1` because we were only flipping one coin. To fit our example, we would use the argument `size = 10`. Use the code box below to figure out the exact probability that you would lose money (remember that it should be a bit less than 0.4, based on our eyeballing of the graph above). Then sum across the appropriate values of the pmf to make sure you get the same answer, to show yourself that the cdf and the pdf give you the same information.
+
+```{r cdfpdf, exercise = TRUE, exercise.lines = 4}
+
+```
+
+```{r cdfpdf-solution}
+pbinom(4, size = 10, prob = 0.5)
+dbinom(0, size = 10, prob = 0.5) + dbinom(1, size = 10, prob = 0.5) + 
+  dbinom(2, size = 10, prob = 0.5) + dbinom(3, size = 10, prob = 0.5) + 
+  dbinom(4, size = 10, prob = 0.5)
+```
+
+#### More resources
+
+[Here's](https://www.youtube.com/watch?v=bGS19PxlGC4) a video that takes you through the steps of constructing a cdf. For more on the binomial distribution, start [here](https://www.khanacademy.org/math/statistics-probability/random-variables-stats-library/binomial-random-variables/v/binomial-variables).

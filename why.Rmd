@@ -1,0 +1,33 @@
+## Why and how
+
+#### Why probability and statistics?
+
+You will learn a wide variety of quantitative methods in PHS 2000 from several different fields, which we hope you will find useful in your research. The common backbone to these is probability and statistics. A strong foundation in these concepts is essential for understanding the motivations and implementation of these methods and for seeing how they relate. 
+
+In this tutorial and throughout the course you'll notice that we attempt to represent as much as possible in mathematical notation. As with any other language, mastering this notation helps you communicate efficiently and precisely. However, there's no unified language -- either in English or notation -- across disciplines, and the differences and inconsistencies can be frustrating. One goal of this tutorial is to introduce you to  notation and to formalize some concepts you may already be familiar with, in order to minimize this frustration. Representing methods in mathematical notation can be helpful in making connections to theory and to implementation in code, and it can also help both you and the PHS 2000 teaching team see what you do and don't understand.
+
+If you have taken several statistics courses before, you may be familiar with most or all of the concepts we go through in this tutorial. We nevertheless recommend that you at least read through it so that you have an understanding of what *we* expect you to be familiar with and to make sure you didn't miss anything in your previous courses. If you're not as comfortable with statistics or R or both, take notes as you go along that you can refer back to later. We hope for all of you that this can be a resource that you return to when you encounter difficulties over the course of the next year.
+
+#### Why R?
+
+There are several great options for statistical software out there, and you may already have mastered one or more of them. In fact, it's beneficial for you and your career to be fluent in as many different languages as possible. We have chosen R to use in this class for several reasons. First of all, it's free. You can install it on any and all of the computers you work on. You don't have to go to the computer lab or use a virtual desktop, and you'll never have to buy or renew a license. Second, it's extendable and flexible. This means other people have already written *packages* which contain sets of *functions* that implement a number of common and less common statistical methods. If there's not a package out there that does exactly what you're looking to do, you can write your own functions to do it. We'll see over the course of this year that the ability to write our own own code to implement the methods we learn, as well as simulations to test those methods, is a huge help in understanding the theory behind them.
+
+R is extremely flexible and has a number of capabilities that go beyond statistics. In particular, [R Markdown](https://rmarkdown.rstudio.com) documents can be used to make your research reproducible as well as prepare a number of different types of reports, presentations, and more. In fact, this entire tutorial was written using the `learnr` package in R Markdown.
+
+#### How to use this tutorial
+
+For this tutorial, you don't need to install anything. All the coding takes place within windows on this website itself. At some point before class starts you'll need to install R and its useful companion RStudio if you haven't already. For help with that you can visit [this other tutorial](https://jjallaire.shinyapps.io/learnr-tutorial-00-setup/).
+
+To use the code windows on this website, simply type in the code you want to evaluate and then click "Run Code". (Instead of clicking the button you can also press `control+enter` on a PC or `command+enter` on a Mac while your cursor is in the box.) Some boxes already have code that you just need to run (or which has already been run for you), others will require you to add to or modify what's there, and some are empty and ready for you to fill. They generally only have as much space as you need for a given problem, but will also scroll so you can fill with as many lines of code as necessary (if your code disappears, make sure you haven't scrolled and hidden it, or try clicking the Start Over button).
+
+It may be helpful to install RStudio now and keep an open R document where you keep track of the code you learn in this tutorial and your own notes. If you want to practice changing the code and running it, it may also be easier to do there than in the code boxes here. Note that the objects you create are not generally available in later code boxes in the tutorial, so if you want more practice you should recreate what you do in a separate R session.
+
+The sections have questions and R exercises designed to check your understanding, either interspersed in the text or in a section at the end labeled *Practice*. Think of these as a way to test your knowledge and decide for yourself whether you're ready to move on. None of the questions are graded (and we can't access your results anyway), you get as many tries as you want, and the solutions (and sometimes hints) are available. (If you only see a hint button, the solution is the last available hint.) You can easily copy and paste the solutions, but we suggest that you type them in yourself instead, as it's better practice.
+
+If you don't feel ready to move on, you may want to check out the extra resources links (most of which are videos and practice at Khan Academy) at the bottom of most sections, or the glossary if you're confused by the terminology. R resources are all lumped together in the final section and we highly recommend checking them out to advance your learning, either during or after you've completed this tutorial.
+
+If you come across any errors or have technical difficulties, please notify Louisa, a former PHS 2000 student and Teaching Fellow, at [louisa_h_smith@g.harvard.edu](mailto:louisa_h_smith@g.harvard.edu).
+
+If you don't feel ready to move on, you may want to check out the extra resources links (most of which are videos and practice at Khan Academy) at the bottom of most sections, or the glossary if you're confused by the terminology. R resources are all lumped together in the final section and we highly recommend checking them out to advance your learning, either during or after you've completed this tutorial.
+
+If you come across any errors or have technical difficulties, please notify Louisa, a former PHS 2000 student and Teaching Fellow, at [louisa_h_smith@g.harvard.edu](mailto:louisa_h_smith@g.harvard.edu).

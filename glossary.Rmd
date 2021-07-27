@@ -1,0 +1,64 @@
+## Glossary
+
+**Bernoulli** The distribution of a random variable that takes on values 1 and 0 with probabilities $p$ and $1 − p$, respectively; $f(x) = p^x(1 − p)^{1−x}$. 
+
+**binomial** The distribution of the number of 1s in a series of $n$ independent 0,1 trials, each with probability $p$; $f(x) = \binom{n}{x} p^x(1 − p)^{n−x}$. 
+
+**central limit theorem** (CLT) States, loosely, that the mean $x$ from a sample of size $n$ converges to a normal distribution with a mean equal to the population mean $E[X]$ and variance $\frac{Var(X)}{n}$ as $n$ approaches $\infty$. 
+
+**confidence interval** A range of plausible parameter values around a statistic, constructed so that it will contain the true value in a fixed proportion (usually 95%) of repeated samples.
+
+**continuous** Can take on any real-numbered value in a range. 
+
+**correlation** Measures the strength and direction of the linear relationship between two variables; $\rho$.
+
+**covariance** Measures the direction and extent of the linear relationship between two variables; $Cov(X, Y)$. 
+
+**cumulative distribution function** (cdf) Gives the probability that a random variable $X$ takes on value less than or equal to $x$; $F(x) = P(X \leq x)$. 
+
+**discrete** Takes on a countable number of possible values. 
+
+**estimator** A function used to estimate a parameter using observed data. 
+
+**expectation** The probability-weighted average over all possible values in a distribution, also called expected value; $E[X]$ or $\mu$.
+
+**independent** Refers to two variables whose distributions do not depend on the values of the other;
+$X   Y \implies Cov(X,Y)=0$.
+
+**independent and identically distributed** (i.i.d.) Random variables that have the same probability distribution and are independent. 
+
+**law of large numbers** (LLN) Tells us that the average, $\bar{X}$, over more and more repeated trials will converge to the expected value, $E[X]$. 
+
+**normal** A common continuous distribution, also called Gaussian; $f(x) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{1}{2}\left(\frac{x - \mu}{\sigma}\right)^2\right)$
+
+**null hypothesis** The hypothesis we attempt to reject with the data, often stating that there is no relationship between two variables; $H_0$. 
+
+**parameter** A (possibly unknown) characteristic of a probability distribution. 
+
+**Poisson** A discrete distribution that takes on integer values from 0 to $\infty$, determined by the rate parameter $\lambda$; $f(x) = \frac{\lambda^x e^{-\lambda}}{x!}$.
+
+**probability density function** (pdf) The function of a continuous random variable that defines the relative likelihood of possible values, or the absolute probability of a range of values. 
+
+**probability distribution** A description of the possible values that a random variable can take on and their likelihoods. 
+
+**probability mass function** (pmf) Gives the probability that a discrete random variable is equal to each of its possible values; $P(X = x)$. 
+
+**random variable** The unknown numerical outcome of some random event. 
+
+**sampling distribution** The probability distribution of a statistic calculated from a random sample.
+
+**standard deviation** Measures the variability of a random variable in the same units as that variable; $\sqrt{Var(X)}$ or $\sigma$.
+
+**standard error** The standard deviation of the sampling distribution of a statistic; for the sample mean, $\frac{\sigma}{\sqrt{n}}$.
+
+**standard normal** Refers to the normal distribution with mean 0 and variance 1. 
+
+**standardize** Transform into units of mean 0 and standard deviation 1 by subtracting the mean and dividing by the standard deviation. 
+
+**statistic** A function of a set of observations. 
+
+**test statistic** A statistic with a cutoff that determines whether or not a null hypothesis is to be rejected. 
+
+**type I error** The probability of rejecting the null hypothesis, given that the null hypothesis is true.
+
+**variance** Measures how far values of a variable generally are from the mean; $Var(X)$ or $\sigma^2$.
