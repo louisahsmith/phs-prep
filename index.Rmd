@@ -44,6 +44,33 @@ output$keep_alive <- renderText({
 })
 ```
 
+```{r child = 'intro.Rmd'}
+```
+
+```{r child = 'why.Rmd'}
+```
+
+```{r child = 'vectors.Rmd'}
+```
+
+```{r child = 'rules.Rmd'}
+```
+
+```{r child = 'discrete.Rmd'}
+```
+
+```{r child = 'cdfs.Rmd'}
+```
+
+```{r child = 'marginal.Rmd'}
+```
+
+```{r child = 'total.Rmd'}
+```
+
+```{r child = 'calculus.Rmd'}
+```
+
 ```{r child = 'pdfs.Rmd'}
 ```
 
