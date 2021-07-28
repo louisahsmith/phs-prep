@@ -71,23 +71,23 @@ output$keep_alive <- renderText({
 ```{r child = 'calculus.Rmd'}
 ```
 
-<!-- ```{r child = 'pdfs.Rmd'} -->
-<!-- ``` -->
+```{r child = 'pdfs.Rmd'}
+```
 
-<!-- ```{r child = 'expectations.Rmd'} -->
-<!-- ``` -->
+```{r child = 'expectations.Rmd'}
+```
 
-<!-- ```{r child = 'matrix.Rmd'} -->
-<!-- ``` -->
+```{r child = 'matrix.Rmd'}
+```
 
-<!-- ```{r child = 'models.Rmd'} -->
-<!-- ``` -->
+```{r child = 'models.Rmd'}
+```
 
-<!-- ```{r child = 'stats.Rmd'} -->
-<!-- ``` -->
+```{r child = 'stats.Rmd'}
+```
 
-<!-- ```{r child = 'glossary.Rmd'} -->
-<!-- ``` -->
+```{r child = 'glossary.Rmd'}
+```
 
-<!-- ```{r child = 'resources.Rmd'} -->
-<!-- ``` -->
+```{r child = 'resources.Rmd'}
+```

@@ -16,7 +16,7 @@ A normally distributed random variable $X \sim N(\mu, \sigma^2)$ is defined by t
 What does that mean? The $\sim$ symbol tells us how the random variable $X$ is distributed (you can read $\sim$ as "is distributed"). In this case, it follows a normal (abbreviated $N$) distribution. The values in parentheses are the parameters that characterize that distribution. The normal distribution has two, but we saw earlier that a Bernoulli distributed random variable is defined by one parameter, its probability $p$, as is a Poisson distributed random variable, which has a rate parameter $\lambda$. We could therefore write $Y \sim Bernoulli(p)$ and $Z \sim Poisson(\lambda)$ for random variables $Y$ and $Z$ that follow those respective distributions.
 
 The standard normal is has mean 0 and variance 1: we could write it normal(0, 1). Here's its pdf:
-```{r normpdf, echo = F}
+```{r normpdf, echo = F, eval = TRUE}
 curve(dnorm(x, 0, 1), xlim = c(-4, 4), main = "Standard normal pdf", ylab = "density")
 ```
 
@@ -25,9 +25,12 @@ question("Look at the standard normal pdf above. Which value is the most likely?
     answer("-4"),
     answer("0", correct = TRUE),
     answer("4"),
-    answer("$\\infty$"),
+    answer("infinity"),
     allow_retry = T
   )
+```
+
+```{r mostLikely2, echo = F}
 question("Which of these values is more likely?",
     answer("-2", correct = TRUE),
     answer("4"),
@@ -59,7 +62,7 @@ It turns out that the blue area, $F(1) \approx `r round(pnorm(1), 5)`$. That's t
 
 Take a second to think about what the function $F(x)$ looks like for the standard normal, based on the picture of its pdf. (Try to draw it out!) Think about how the integral changes as you increase the values of $x$. How does $F(-2)$ compare to $F(-1)$ and $F(0)$? What are the limiting values as $x$ approaches $- \infty$ and $\infty$? Make sure your drawing of $F(x)$ matches the correct answers to the following questions, which you should know from the introduction to cdfs in the context of discrete distributions.
 
-```{r Fquiz, echo = F}
+```{r Fquiz, echo = F, eval = TRUE}
 question("How would you describe the function $F(X)$?",
     answer("Increasing", correct = TRUE),
     answer("Decreasing"),
@@ -67,11 +70,17 @@ question("How would you describe the function $F(X)$?",
     answer("Flat everywhere"),
     allow_retry = T
   )
+```
+
+```{r Fquiz2, echo = F}
   question("For continuous distributions, the cdf can take on values greater than 1.",
     answer("True", message = "The pdf, but not the cdf, can."),
     answer("False", correct = TRUE),
     allow_retry = T
   )
+```
+
+```{r Fquiz3, echo = F}
     question("For continuous distributions, the cdf can take on values less than 0.",
     answer("True"),
     answer("False", correct = TRUE),
@@ -154,16 +163,16 @@ Let's think about what this value means for a bit.
 
 If we were able to draw an infinite number of samples from a standard normal distribution, then about 84% of them would be < 1. When are we ever drawing infinite samples from a standard normal distribution though? If you said never, you're absolutely right. Nonetheless, this and other values from the standard normal cdf are still incredibly helpful and you will end up using them all the time!
 
-Let's first see what it would look like if we could draw a ton (though not an infinite number!) of realizations from a standard normal, which R allows us to do. The prefix R, when used with the distributional abbreviations, gives random (really pseudo-random) draws from that distribution. Let's save 1,000,000 of them to the vector `x`. Try using the functions you know on that vector. Don't print out the whole vector, though, because it's huge! You can also try to figure out other functions which may be useful -- often they're very common-sense. Try `sd()` or `min()`.
+Let's first see what it would look like if we could draw a ton (though not an infinite number!) of realizations from a standard normal, which R allows us to do. The prefix R, when used with the distributional abbreviations, gives random (really pseudo-random) draws from that distribution. Let's save 10,000 of them to the vector `x`. Try using the functions you know on that vector. Don't print out the whole vector, though, because it's huge! You can also try to figure out other functions which may be useful -- often they're very common-sense. Try `sd()` or `min()`.
 ```{r norm-prep, echo = F}
 set.seed(123)
-x <- rnorm(1000000)
+x <- rnorm(10000)
 ```
 
 (Note the line `set.seed(123)` below. This gives R a certain random number to start at so that we can all get the same values on our computers. Whenever you're running code with a `set.seed()` command, make sure to re-run that line every time you re-run the code, so your results match up. If you're doing your own simulation, pick a random integer as an argument for the function -- don't always use `123`!)
 ```{r xnorm, exercise = TRUE, exercise.lines = 4, exercise.setup = "norm-prep"}
 set.seed(123)
-x <- rnorm(1000000)
+x <- rnorm(10000)
 ```
 
 Let's first try to recreate the pdf for the standard normal using these data. Remember that since we are in the continuous case, $f(x) \neq P(X = x)$ for $X \sim Normal(0, 1)$. To see this in action, consider $P(X = 0)$. This is the mean of the distribution -- and the height of the bell shape, so we might expect the largest value if we run `mean(x == 0)` (recall that's how we can estimate a probability from that data).
