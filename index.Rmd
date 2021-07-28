@@ -43,11 +43,10 @@ output$keep_alive <- renderText({
   input$alive_count
 })
 ```
-
-```{r child = 'intro.Rmd'}
+```{r child = 'why.Rmd'}
 ```
 
-```{r child = 'why.Rmd'}
+```{r child = 'intro.Rmd'}
 ```
 
 ```{r child = 'vectors.Rmd'}
