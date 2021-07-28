@@ -26,8 +26,4 @@ The sections have questions and R exercises designed to check your understanding
 
 If you don't feel ready to move on, you may want to check out the extra resources links (most of which are videos and practice at Khan Academy) at the bottom of most sections, or the glossary if you're confused by the terminology. R resources are all lumped together in the final section and we highly recommend checking them out to advance your learning, either during or after you've completed this tutorial.
 
-If you come across any errors or have technical difficulties, please notify Louisa, a former PHS 2000 student and Teaching Fellow, at [louisa_h_smith@g.harvard.edu](mailto:louisa_h_smith@g.harvard.edu).
-
-If you don't feel ready to move on, you may want to check out the extra resources links (most of which are videos and practice at Khan Academy) at the bottom of most sections, or the glossary if you're confused by the terminology. R resources are all lumped together in the final section and we highly recommend checking them out to advance your learning, either during or after you've completed this tutorial.
-
-If you come across any errors or have technical difficulties, please notify Louisa, a former PHS 2000 student and Teaching Fellow, at [louisa_h_smith@g.harvard.edu](mailto:louisa_h_smith@g.harvard.edu).
+If you come across any errors or have technical difficulties, please notify [Louisa Smith](www.louisahsmith.com), a former PHS 2000 student and Teaching Fellow and the creator of these materials, at [louisahsmith@gmail.com](mailto:louisahsmith@gmail.com). (P.S. She also hosts materials from her R course at https://intro-to-r-2020.louisahsmith.com.)

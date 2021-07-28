@@ -1,3 +1,7 @@
 #keep_alive {
   visibility: hidden;
 }
+
+body {
+  font-size: 15px;
+}
