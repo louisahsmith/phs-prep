@@ -44,50 +44,23 @@ output$keep_alive <- renderText({
 })
 ```
 
-```{r child = 'intro.Rmd'}
+```{r child = 'pdfs.Rmd'}
 ```
 
-```{r child = 'why.Rmd'}
+```{r child = 'expectations.Rmd'}
 ```
 
-```{r child = 'vectors.Rmd'}
+```{r child = 'matrix.Rmd'}
 ```
 
-```{r child = 'rules.Rmd'}
+```{r child = 'models.Rmd'}
 ```
 
-```{r child = 'discrete.Rmd'}
+```{r child = 'stats.Rmd'}
 ```
 
-```{r child = 'cdfs.Rmd'}
+```{r child = 'glossary.Rmd'}
 ```
 
-```{r child = 'marginal.Rmd'}
+```{r child = 'resources.Rmd'}
 ```
-
-```{r child = 'total.Rmd'}
-```
-
-```{r child = 'calculus.Rmd'}
-```
-
-<!-- ```{r child = 'pdfs.Rmd'} -->
-<!-- ``` -->
-
-<!-- ```{r child = 'expectations.Rmd'} -->
-<!-- ``` -->
-
-<!-- ```{r child = 'matrix.Rmd'} -->
-<!-- ``` -->
-
-<!-- ```{r child = 'models.Rmd'} -->
-<!-- ``` -->
-
-<!-- ```{r child = 'stats.Rmd'} -->
-<!-- ``` -->
-
-<!-- ```{r child = 'glossary.Rmd'} -->
-<!-- ``` -->
-
-<!-- ```{r child = 'resources.Rmd'} -->
-<!-- ``` -->
